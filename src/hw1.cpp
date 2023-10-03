@@ -56,7 +56,15 @@ Image3 hw_1_2(const std::vector<std::string> &params) {
 
     for (int y = 0; y < img.height; y++) {
         for (int x = 0; x < img.width; x++) {
-            img(x, y) = Vector3{1, 1, 1};
+            img(x, y) = Vector3{0.5, 0.5, 0.5};
+
+            Vector2 pixelCenter(x + Real(0.5), y + Real(0.5));
+            Real distance = length(pixelCenter - circle.center);
+            Real radiusSquared = radius * radius;
+            if (distance <= circle.radius) {
+                    // Set the pixel's color to the circle's color
+                    img(x, y) = circle.color;
+                }
         }
     }
     return img;
