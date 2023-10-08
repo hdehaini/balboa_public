@@ -104,8 +104,8 @@ Image3 hw_1_3(const std::vector<std::string> &params) {
 
     Image3 img(scene.resolution.x, scene.resolution.y);
 
-    for (int y = 0; y < img.height; y++) {
-        for (int x = 0; x < img.width; x++) {
+    for (int x = 0; x < img.width; x++) {
+        for (int y = 0; y < img.height; y++) {
             
             Vector2 pixelCenter(x + Real(0.5), y + Real(0.5));
             img(x, y) = scene.background;
@@ -128,31 +128,30 @@ Image3 hw_1_3(const std::vector<std::string> &params) {
                         img(x, y) = rectangle->color;
                     }
                 } else if (auto *triangle = std::get_if<Triangle>(&shape)) {
-                    Vector2 p0 = triangle->p0;
-                    Vector2 p1 = triangle->p1;
-                    Vector2 p2 = triangle->p2;
+                    Vector2 p0 = triangle->p0 + Vector2(0.5, 0.5);
+                    Vector2 p1 = triangle->p1 + Vector2(0.5, 0.5);
+                    Vector2 p2 = triangle->p2 + Vector2(0.5, 0.5);
 
                     Vector2 e01 = p1 - p0;
                     Vector2 e12 = p2 - p1;
                     Vector2 e20 = p0 - p2;
 
-                    Vector2 n01(-e01.y, e01.x);
-                    Vector2 n12(-e12.y, e12.x);
-                    Vector2 n20(-e20.y, e20.x);
+                    Vector2 n01(e01.y, -e01.x);
+                    Vector2 n12(e12.y, -e12.x);
+                    Vector2 n20(e20.y, -e20.x);
 
                     Vector2 v0 = p0 - pixelCenter;
                     Vector2 v1 = p1 - pixelCenter;
                     Vector2 v2 = p2 - pixelCenter;
                     
-                    if ((dot(v0, n01) >= 0) && (dot(v1, n12) >= 0) && (dot(v2, n20) >= 0)) {
+                    if ((dot(v0, n01) >= 0) && (dot(v1, n12) >= 0) && (dot(v2, n20) >= 0) || (dot(v0, n01) <= 0) && (dot(v1, n12) <= 0) && (dot(v2, n20) <= 0)) {
                         img(x, y) = triangle->color;
                     }
                 }
-
             }
         }
-        return img;
     }
+    return img;
 }
 
 Image3 hw_1_4(const std::vector<std::string> &params) {
