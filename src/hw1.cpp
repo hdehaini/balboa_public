@@ -173,306 +173,52 @@ Image3 hw_1_4(const std::vector<std::string> &params) {
 
             for (int i = 0; i < scene.shapes.size(); i++) {
                 const Shape &shape = scene.shapes[i];
-
-                // // Scale
-                //     if((transform_type(0,1) == 0) && (transform_type(0,2) == 0) && (transform_type(1,0) == 0) && (transform_type(1,2) == 0) && (transform_type(2,0) == 0)){
-
-                //         if (auto *circle = std::get_if<Circle>(&shape)) {
-                //             Matrix3x3 transform_type = circle->transform;
-                //             Real distance = length(pixelCenter - circle->center);
-
-                //         } else if (auto *rectangle = std::get_if<Rectangle>(&shape)) {
-                            
-                //             Matrix3x3 transform_type = rectangle->transform;
-                            
-                //         } else if (auto *triangle = std::get_if<Triangle>(&shape)) {
-
-                //             Matrix3x3 transform_type = triangle->transform;
-
-                //             Vector2 p0 = triangle->p0 + Vector2(0.5, 0.5);
-                //             Vector2 p1 = triangle->p1 + Vector2(0.5, 0.5);
-                //             Vector2 p2 = triangle->p2 + Vector2(0.5, 0.5);
-
-                //             Vector2 e01 = p1 - p0;
-                //             Vector2 e12 = p2 - p1;
-                //             Vector2 e20 = p0 - p2;
-
-                //             Vector2 n01(e01.y, -e01.x);
-                //             Vector2 n12(e12.y, -e12.x);
-                //             Vector2 n20(e20.y, -e20.x);
-
-                //             Vector2 v0 = p0 - pixelCenter;
-                //             Vector2 v1 = p1 - pixelCenter;
-                //             Vector2 v2 = p2 - pixelCenter;
-                //         }
-
-                //     // Shear_x
-                //     } else if ((transform_type(0,2) == 0) && (transform_type(1,0) == 0) && (transform_type(1,2) == 0) && (transform_type(2,0) == 0)){
-                        
-                //         if (auto *circle = std::get_if<Circle>(&shape)) {
-                //             Matrix3x3 transform_type = circle->transform;
-                //             Real distance = length(pixelCenter - circle->center);
-
-                //             if (distance <= circle->radius) {
-                //                 // Set the pixel's color to the circle's color
-                //                 img(x + transform_type(0,1), y) = circle->color;
-                //             }
-
-                //         } else if (auto *rectangle = std::get_if<Rectangle>(&shape)) {
-                            
-                //             Matrix3x3 transform_type = rectangle->transform;
-                            
-                //         } else if (auto *triangle = std::get_if<Triangle>(&shape)) {
-
-                //             Matrix3x3 transform_type = triangle->transform;
-
-                //             Vector2 p0 = triangle->p0 + Vector2(0.5, 0.5);
-                //             Vector2 p1 = triangle->p1 + Vector2(0.5, 0.5);
-                //             Vector2 p2 = triangle->p2 + Vector2(0.5, 0.5);
-
-                //             Vector2 e01 = p1 - p0;
-                //             Vector2 e12 = p2 - p1;
-                //             Vector2 e20 = p0 - p2;
-
-                //             Vector2 n01(e01.y, -e01.x);
-                //             Vector2 n12(e12.y, -e12.x);
-                //             Vector2 n20(e20.y, -e20.x);
-
-                //             Vector2 v0 = p0 - pixelCenter;
-                //             Vector2 v1 = p1 - pixelCenter;
-                //             Vector2 v2 = p2 - pixelCenter;
-                //         }
-                        
-                //     // Shear_y
-                //     } else if ((transform_type(0,1) == 0) && (transform_type(0,2) == 0) && (transform_type(1,2) == 0) && (transform_type(2,0) == 0)){
-
-                //         if (auto *circle = std::get_if<Circle>(&shape)) {
-                //             Matrix3x3 transform_type = circle->transform;
-                //             Real distance = length(pixelCenter - circle->center);
-
-                //         } else if (auto *rectangle = std::get_if<Rectangle>(&shape)) {
-                            
-                //             Matrix3x3 transform_type = rectangle->transform;
-                            
-                //         } else if (auto *triangle = std::get_if<Triangle>(&shape)) {
-
-                //             Matrix3x3 transform_type = triangle->transform;
-
-                //             Vector2 p0 = triangle->p0 + Vector2(0.5, 0.5);
-                //             Vector2 p1 = triangle->p1 + Vector2(0.5, 0.5);
-                //             Vector2 p2 = triangle->p2 + Vector2(0.5, 0.5);
-
-                //             Vector2 e01 = p1 - p0;
-                //             Vector2 e12 = p2 - p1;
-                //             Vector2 e20 = p0 - p2;
-
-                //             Vector2 n01(e01.y, -e01.x);
-                //             Vector2 n12(e12.y, -e12.x);
-                //             Vector2 n20(e20.y, -e20.x);
-
-                //             Vector2 v0 = p0 - pixelCenter;
-                //             Vector2 v1 = p1 - pixelCenter;
-                //             Vector2 v2 = p2 - pixelCenter;
-                //         }
-                        
-                //     // Rotate
-                //     }else if ((transform_type(0,2) == 0) && (transform_type(1,2) == 0) && (transform_type(2,0) == 0)){
-                //         if (auto *circle = std::get_if<Circle>(&shape)) {
-                //             Matrix3x3 transform_type = circle->transform;
-                //             Real distance = length(pixelCenter - circle->center);
-
-                //         } else if (auto *rectangle = std::get_if<Rectangle>(&shape)) {
-                            
-                //             Matrix3x3 transform_type = rectangle->transform;
-                            
-                //         } else if (auto *triangle = std::get_if<Triangle>(&shape)) {
-
-                //             Matrix3x3 transform_type = triangle->transform;
-
-                //             Vector2 p0 = triangle->p0 + Vector2(0.5, 0.5);
-                //             Vector2 p1 = triangle->p1 + Vector2(0.5, 0.5);
-                //             Vector2 p2 = triangle->p2 + Vector2(0.5, 0.5);
-
-                //             Vector2 e01 = p1 - p0;
-                //             Vector2 e12 = p2 - p1;
-                //             Vector2 e20 = p0 - p2;
-
-                //             Vector2 n01(e01.y, -e01.x);
-                //             Vector2 n12(e12.y, -e12.x);
-                //             Vector2 n20(e20.y, -e20.x);
-
-                //             Vector2 v0 = p0 - pixelCenter;
-                //             Vector2 v1 = p1 - pixelCenter;
-                //             Vector2 v2 = p2 - pixelCenter;
-                //         }
-
-                //     // Translate
-                //     } else if ((transform_type(0,1) == 0) && (transform_type(1,0) == 0) && (transform_type(2,0) == 0)){
-                //         if (auto *circle = std::get_if<Circle>(&shape)) {
-                //             Matrix3x3 transform_type = circle->transform;
-                //             Real distance = length(pixelCenter - circle->center);
-
-                //         } else if (auto *rectangle = std::get_if<Rectangle>(&shape)) {
-                            
-                //             Matrix3x3 transform_type = rectangle->transform;
-                            
-                //         } else if (auto *triangle = std::get_if<Triangle>(&shape)) {
-
-                //             Matrix3x3 transform_type = triangle->transform;
-
-                //             Vector2 p0 = triangle->p0 + Vector2(0.5, 0.5);
-                //             Vector2 p1 = triangle->p1 + Vector2(0.5, 0.5);
-                //             Vector2 p2 = triangle->p2 + Vector2(0.5, 0.5);
-
-                //             Vector2 e01 = p1 - p0;
-                //             Vector2 e12 = p2 - p1;
-                //             Vector2 e20 = p0 - p2;
-
-                //             Vector2 n01(e01.y, -e01.x);
-                //             Vector2 n12(e12.y, -e12.x);
-                //             Vector2 n20(e20.y, -e20.x);
-
-                //             Vector2 v0 = p0 - pixelCenter;
-                //             Vector2 v1 = p1 - pixelCenter;
-                //             Vector2 v2 = p2 - pixelCenter;
-                //         }
-                //     }
-                
                 if (auto *circle = std::get_if<Circle>(&shape)) {
-                    Matrix3x3 transform_type = circle->transform;
-                    Real distance = length(pixelCenter - circle->center);
 
-                    // Scale
-                    if((transform_type(0,1) == 0) && (transform_type(0,2) == 0) && (transform_type(1,0) == 0) && (transform_type(1,2) == 0) && (transform_type(2,0) == 0)){
+                    Matrix3x3 transform = parse_transformation(circle->transform); // Use parse_transformation function
+                    
 
-                        if (distance <= circle->radius) {
-                            // Set the pixel's color to the circle's color
-                            img(x * transform_type(0,0), y * transform_type(1,1)) = circle->color;
-                        }
+                    // Transform the pixel's center using the parsed transformation matrix
+                    Vector2 transformedPixelCenter;
+                    transformedPixelCenter.x = transform(0, 0) * pixelCenter.x + transform(0, 1) * pixelCenter.y + transform(0, 2);
+                    transformedPixelCenter.y = transform(1, 0) * pixelCenter.x + transform(1, 1) * pixelCenter.y + transform(1, 2);
 
-                    // Shear_x
-                    } else if ((transform_type(0,2) == 0) && (transform_type(1,0) == 0) && (transform_type(1,2) == 0) && (transform_type(2,0) == 0)){
-                        
-                        if (distance <= circle->radius) {
-                            // Set the pixel's color to the circle's color
-                            img(x + transform_type(0,1), y) = circle->color;
-                        }
-                        
-                    // Shear_y
-                    } else if ((transform_type(0,1) == 0) && (transform_type(0,2) == 0) && (transform_type(1,2) == 0) && (transform_type(2,0) == 0)){
+                    // Transform the circle's center using the parsed transformation matrix
+                    Real distance = length(transformedPixelCenter - circle->center);
 
-                        if (distance <= circle->radius) {
-                            // Set the pixel's color to the circle's color
-                            img(x, y + transform_type(1,0)) = circle->color;
-                        }
-                        
-                    // Rotate
-                    }else if ((transform_type(0,2) == 0) && (transform_type(1,2) == 0) && (transform_type(2,0) == 0)){
-                        // Calculate the offset from the circle's center to the current pixel
-                        Vector2 offset(x - circle->center.x, y - circle->center.y);
-
-                        // Apply the rotation transformation to the offset
-                        Real angleRadians = acos(transform_type(0, 0));  // Assuming transform_type(0, 0) stores the rotation angle in radians
-                        Vector2 rotatedOffset;
-                        rotatedOffset.x = offset.x * cos(angleRadians) - offset.y * sin(angleRadians);
-                        rotatedOffset.y = offset.x * sin(angleRadians) + offset.y * cos(angleRadians);
-
-                        // Calculate the rotated pixel coordinates
-                        int rotatedX = circle->center.x + rotatedOffset.x;
-                        int rotatedY = circle->center.y + rotatedOffset.y;
-
-                        if (distance <= circle->radius && rotatedX >= 0 && rotatedX < img.width && rotatedY >= 0 && rotatedY < img.height) {
-                            // Set the pixel's color to the circle's color
-                            img(rotatedX, rotatedY) = circle->color;
-                        }
-
-                    // Translate
-                    } else if ((transform_type(0,1) == 0) && (transform_type(1,0) == 0) && (transform_type(2,0) == 0)){
-                        if (distance <= circle->radius) {
-                            // Set the pixel's color to the circle's color
-                            img(x + transform_type(0,2), y + transform_type(1,2)) = circle->color;
-                        }
+                    if (distance <= circle->radius) {
+                        img(x, y) = circle->color;
                     }
-
-
-
-
 
                 } else if (auto *rectangle = std::get_if<Rectangle>(&shape)) {
+
+                    Matrix3x3 transform = parse_transformation(rectangle->transform); // Use parse_transformation function
                     
-                    Matrix3x3 transform_type = rectangle->transform;
 
-                    // Scale
-                    if((transform_type(0,1) == 0) && (transform_type(0,2) == 0) && (transform_type(1,0) == 0) && (transform_type(1,2) == 0) && (transform_type(2,0) == 0)){
-                        if (pixelCenter.x >= rectangle->p_min.x &&
-                            pixelCenter.x <= rectangle->p_max.x &&
-                            pixelCenter.y >= rectangle->p_min.y &&
-                            pixelCenter.y <= rectangle->p_max.y) {
-                            img(x * transform_type(0,0), y * transform_type(1,1)) = rectangle->color;
-                        }
+                    // Transform the pixel's center using the parsed transformation matrix
+                    Vector2 transformedPixelCenter;
+                    transformedPixelCenter.x = transform(0, 0) * pixelCenter.x + transform(0, 1) * pixelCenter.y + transform(0, 2);
+                    transformedPixelCenter.y = transform(1, 0) * pixelCenter.x + transform(1, 1) * pixelCenter.y + transform(1, 2);
 
-                    // Shear_x
-                    } else if ((transform_type(0,2) == 0) && (transform_type(1,0) == 0) && (transform_type(1,2) == 0) && (transform_type(2,0) == 0)){
-
-                        if (pixelCenter.x >= rectangle->p_min.x &&
-                            pixelCenter.x <= rectangle->p_max.x &&
-                            pixelCenter.y >= rectangle->p_min.y &&
-                            pixelCenter.y <= rectangle->p_max.y) {
-                            img(x + transform_type(0,1), y) = rectangle->color;
-                        }
-                        
-                    // Shear_y
-                    } else if ((transform_type(0,1) == 0) && (transform_type(0,2) == 0) && (transform_type(1,2) == 0) && (transform_type(2,0) == 0)){
-
-                        if (pixelCenter.x >= rectangle->p_min.x &&
-                            pixelCenter.x <= rectangle->p_max.x &&
-                            pixelCenter.y >= rectangle->p_min.y &&
-                            pixelCenter.y <= rectangle->p_max.y) {
-                            img(x, y + transform_type(1,0)) = rectangle->color;
-                        }
-                        
-                    // Rotate
-                    }else if ((transform_type(0,2) == 0) && (transform_type(1,2) == 0) && (transform_type(2,0) == 0)){
-
-                        // Calculate the offset from the circle's center to the current pixel
-                        Vector2 offset(x - rectangle->p_min.x, y - rectangle->p_min.y);
-
-                        // Apply the rotation transformation to the offset
-                        Real angleRadians = acos(transform_type(0, 0));  // Assuming transform_type(0, 0) stores the rotation angle in radians
-                        Vector2 rotatedOffset;
-                        rotatedOffset.x = offset.x * cos(angleRadians) - offset.y * sin(angleRadians);
-                        rotatedOffset.y = offset.x * sin(angleRadians) + offset.y * cos(angleRadians);
-
-                        // Calculate the rotated pixel coordinates
-                        int rotatedX = rectangle->p_min.x + rotatedOffset.x;
-                        int rotatedY = rectangle->p_min.y + rotatedOffset.y;
-
-                        if (pixelCenter.x >= rectangle->p_min.x &&
-                            pixelCenter.x <= rectangle->p_max.x &&
-                            pixelCenter.y >= rectangle->p_min.y &&
-                            pixelCenter.y <= rectangle->p_max.y &&
-                            rotatedX >= 0 && rotatedX < img.width && rotatedY >= 0 && rotatedY < img.height) {
-                            // Set the pixel's color to the circle's color
-                            img(rotatedX, rotatedY) = rectangle->color;
-                        }
-                        
-                    // Translate
-                    } else if ((transform_type(0,1) == 0) && (transform_type(1,0) == 0) && (transform_type(2,0) == 0)){
-                        
-                        if (pixelCenter.x >= rectangle->p_min.x &&
-                            pixelCenter.x <= rectangle->p_max.x &&
-                            pixelCenter.y >= rectangle->p_min.y &&
-                            pixelCenter.y <= rectangle->p_max.y) {
-                                img(x + transform_type(0,2), y + transform_type(1,2)) = rectangle->color;
-                            }
+                    // Check if the transformed pixel center is inside the transformed rectangle
+                    if (transformedPixelCenter.x >= rectangle->p_min.x &&
+                        transformedPixelCenter.x <= rectangle->p_max.x &&
+                        transformedPixelCenter.y >= rectangle->p_min.y &&
+                        transformedPixelCenter.y <= rectangle->p_max.y) {
+                        img(x, y) = rectangle->color;
 
                     }
-
-
-
-                    
                 } else if (auto *triangle = std::get_if<Triangle>(&shape)) {
 
+                    Matrix3x3 transform = parse_transformation(triangle->transform); // Use parse_transformation function
+                    
+
+                    // Transform the pixel's center using the parsed transformation matrix
+                    Vector2 transformedPixelCenter;
+                    transformedPixelCenter.x = transform(0, 0) * pixelCenter.x + transform(0, 1) * pixelCenter.y + transform(0, 2);
+                    transformedPixelCenter.y = transform(1, 0) * pixelCenter.x + transform(1, 1) * pixelCenter.y + transform(1, 2);
+
+                    // Transform the triangle's vertices using the parsed transformation matrix
                     Matrix3x3 transform_type = triangle->transform;
 
                     Vector2 p0 = triangle->p0 + Vector2(0.5, 0.5);
@@ -487,58 +233,12 @@ Image3 hw_1_4(const std::vector<std::string> &params) {
                     Vector2 n12(e12.y, -e12.x);
                     Vector2 n20(e20.y, -e20.x);
 
-                    Vector2 v0 = p0 - pixelCenter;
-                    Vector2 v1 = p1 - pixelCenter;
-                    Vector2 v2 = p2 - pixelCenter;
+                    Vector2 v0 = p0 - transformedPixelCenter;
+                    Vector2 v1 = p1 - transformedPixelCenter;
+                    Vector2 v2 = p2 - transformedPixelCenter;
 
-                    // Scale
-                    if((transform_type(0,1) == 0) && (transform_type(0,2) == 0) && (transform_type(1,0) == 0) && (transform_type(1,2) == 0) && (transform_type(2,0) == 0)){
-                        
-                        if ((dot(v0, n01) >= 0) && (dot(v1, n12) >= 0) && (dot(v2, n20) >= 0) || (dot(v0, n01) <= 0) && (dot(v1, n12) <= 0) && (dot(v2, n20) <= 0)) {
-                            img(x * transform_type(0,0), y * transform_type(1,1)) = triangle->color;
-                        }
-
-                    // Shear_x
-                    } else if ((transform_type(0,2) == 0) && (transform_type(1,0) == 0) && (transform_type(1,2) == 0) && (transform_type(2,0) == 0)){
-
-                        if ((dot(v0, n01) >= 0) && (dot(v1, n12) >= 0) && (dot(v2, n20) >= 0) || (dot(v0, n01) <= 0) && (dot(v1, n12) <= 0) && (dot(v2, n20) <= 0)) {
-                            img(x + transform_type(0,1), y) = triangle->color;
-                        }
-                        
-                    // Shear_y
-                    } else if ((transform_type(0,1) == 0) && (transform_type(0,2) == 0) && (transform_type(1,2) == 0) && (transform_type(2,0) == 0)){
-
-                        if ((dot(v0, n01) >= 0) && (dot(v1, n12) >= 0) && (dot(v2, n20) >= 0) || (dot(v0, n01) <= 0) && (dot(v1, n12) <= 0) && (dot(v2, n20) <= 0)) {
-                            img(x, y + transform_type(1,0)) = triangle->color;
-                        }
-                        
-                    // Rotate
-                    }else if ((transform_type(0,2) == 0) && (transform_type(1,2) == 0) && (transform_type(2,0) == 0)){
-
-                        // Calculate the offset from the circle's center to the current pixel
-                        Vector2 offset(x - triangle->p0.x, y - triangle->p0.y);
-
-                        // Apply the rotation transformation to the offset
-                        Real angleRadians = acos(transform_type(0, 0));  // Assuming transform_type(0, 0) stores the rotation angle in radians
-                        Vector2 rotatedOffset;
-                        rotatedOffset.x = offset.x * cos(angleRadians) - offset.y * sin(angleRadians);
-                        rotatedOffset.y = offset.x * sin(angleRadians) + offset.y * cos(angleRadians);
-
-                        // Calculate the rotated pixel coordinates
-                        int rotatedX = triangle->p0.x + rotatedOffset.x;
-                        int rotatedY = triangle->p0.y + rotatedOffset.y;
-
-                        if ((dot(v0, n01) >= 0) && (dot(v1, n12) >= 0) && (dot(v2, n20) >= 0) || (dot(v0, n01) <= 0) && (dot(v1, n12) <= 0) && (dot(v2, n20) <= 0) && rotatedX >= 0 && rotatedX < img.width && rotatedY >= 0 && rotatedY < img.height) {
-                            // Set the pixel's color to the circle's color
-                            img(rotatedX, rotatedY) = triangle->color;
-                        }
-                        
-                    // Translate
-                    } else if ((transform_type(0,1) == 0) && (transform_type(1,0) == 0) && (transform_type(2,0) == 0)){
-                        
-                        if ((dot(v0, n01) >= 0) && (dot(v1, n12) >= 0) && (dot(v2, n20) >= 0) || (dot(v0, n01) <= 0) && (dot(v1, n12) <= 0) && (dot(v2, n20) <= 0)) {
-                            img(x + transform_type(0,2), y + transform_type(1,2)) = triangle->color;
-                        }
+                    if ((dot(v0, n01) >= 0) && (dot(v1, n12) >= 0) && (dot(v2, n20) >= 0) || (dot(v0, n01) <= 0) && (dot(v1, n12) <= 0) && (dot(v2, n20) <= 0)) {
+                        img(x, y) = triangle->color;
                     }
                 }
             }
