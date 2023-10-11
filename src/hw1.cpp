@@ -171,59 +171,58 @@ Image3 hw_1_4(const std::vector<std::string> &params) {
             Vector2 pixelCenter(x + Real(0.5), y + Real(0.5));
             img(x, y) = scene.background;
 
-            for (int i = 0; i < scene.shapes.size(); i++) {
-                const Shape &shape = scene.shapes[i];
+            for (const Shape &shape : scene.shapes) {
+                // const Shape &shape = scene.shapes[i];
+
+                Matrix3x3 transform = get_transform(shape);
+                Matrix3x3 inverseTransform = inverse(transform);
+
+                // Apply the transformation to the pixel's center
+                Vector2 objectSpaceCenter;
+                objectSpaceCenter.x = inverseTransform(0, 0) * pixelCenter.x + inverseTransform(0, 1) * pixelCenter.y + inverseTransform(0, 2);
+                objectSpaceCenter.y = inverseTransform(1, 0) * pixelCenter.x + inverseTransform(1, 1) * pixelCenter.y + inverseTransform(1, 2);
+
+
                 if (auto *circle = std::get_if<Circle>(&shape)) {
 
-                    Matrix3x3 transform = parse_transformation(circle->transform); // Use parse_transformation function
-                    
-
-                    // Transform the pixel's center using the parsed transformation matrix
-                    Vector2 transformedPixelCenter;
-                    transformedPixelCenter.x = transform(0, 0) * pixelCenter.x + transform(0, 1) * pixelCenter.y + transform(0, 2);
-                    transformedPixelCenter.y = transform(1, 0) * pixelCenter.x + transform(1, 1) * pixelCenter.y + transform(1, 2);
-
-                    // Transform the circle's center using the parsed transformation matrix
-                    Real distance = length(transformedPixelCenter - circle->center);
-
-                    if (distance <= circle->radius) {
+                    Vector2 radii(circle->radius, circle->radius); // Assume the circle is transformed into an ellipse
+                    Vector2 scaledObjectSpaceCenter = Vector2(
+                        objectSpaceCenter.x / radii.x,
+                        objectSpaceCenter.y / radii.y
+                    );
+                    if (dot(scaledObjectSpaceCenter, scaledObjectSpaceCenter) <= 1) {
                         img(x, y) = circle->color;
                     }
 
                 } else if (auto *rectangle = std::get_if<Rectangle>(&shape)) {
 
-                    Matrix3x3 transform = parse_transformation(rectangle->transform); // Use parse_transformation function
-                    
-
-                    // Transform the pixel's center using the parsed transformation matrix
-                    Vector2 transformedPixelCenter;
-                    transformedPixelCenter.x = transform(0, 0) * pixelCenter.x + transform(0, 1) * pixelCenter.y + transform(0, 2);
-                    transformedPixelCenter.y = transform(1, 0) * pixelCenter.x + transform(1, 1) * pixelCenter.y + transform(1, 2);
-
-                    // Check if the transformed pixel center is inside the transformed rectangle
-                    if (transformedPixelCenter.x >= rectangle->p_min.x &&
-                        transformedPixelCenter.x <= rectangle->p_max.x &&
-                        transformedPixelCenter.y >= rectangle->p_min.y &&
-                        transformedPixelCenter.y <= rectangle->p_max.y) {
+                   // Check if the transformed pixel center is inside the transformed rectangle
+                    if (objectSpaceCenter.x >= rectangle->p_min.x &&
+                        objectSpaceCenter.x <= rectangle->p_max.x &&
+                        objectSpaceCenter.y >= rectangle->p_min.y &&
+                        objectSpaceCenter.y <= rectangle->p_max.y) {
                         img(x, y) = rectangle->color;
 
                     }
                 } else if (auto *triangle = std::get_if<Triangle>(&shape)) {
 
-                    Matrix3x3 transform = parse_transformation(triangle->transform); // Use parse_transformation function
-                    
-
-                    // Transform the pixel's center using the parsed transformation matrix
-                    Vector2 transformedPixelCenter;
-                    transformedPixelCenter.x = transform(0, 0) * pixelCenter.x + transform(0, 1) * pixelCenter.y + transform(0, 2);
-                    transformedPixelCenter.y = transform(1, 0) * pixelCenter.x + transform(1, 1) * pixelCenter.y + transform(1, 2);
-
                     // Transform the triangle's vertices using the parsed transformation matrix
                     Matrix3x3 transform_type = triangle->transform;
 
-                    Vector2 p0 = triangle->p0 + Vector2(0.5, 0.5);
-                    Vector2 p1 = triangle->p1 + Vector2(0.5, 0.5);
-                    Vector2 p2 = triangle->p2 + Vector2(0.5, 0.5);
+                    Vector2 p0, p1, p2;
+                    p0.x = transform(0, 0) * (triangle->p0.x + 0.5) + transform(0, 1) * (triangle->p0.y + 0.5) + transform(0, 2);
+                    p0.y = transform(1, 0) * (triangle->p0.x + 0.5) + transform(1, 1) * (triangle->p0.y + 0.5) + transform(1, 2);
+
+                    p1.x = transform(0, 0) * (triangle->p1.x + 0.5) + transform(0, 1) * (triangle->p1.y + 0.5) + transform(0, 2);
+                    p1.y = transform(1, 0) * (triangle->p1.x + 0.5) + transform(1, 1) * (triangle->p1.y + 0.5) + transform(1, 2);
+
+                    p2.x = transform(0, 0) * (triangle->p2.x + 0.5) + transform(0, 1) * (triangle->p2.y + 0.5) + transform(0, 2);
+                    p2.y = transform(1, 0) * (triangle->p2.x + 0.5) + transform(1, 1) * (triangle->p2.y + 0.5) + transform(1, 2);
+
+
+                    // Vector2 p0 = triangle->p0 + Vector2(0.5, 0.5);
+                    // Vector2 p1 = triangle->p1 + Vector2(0.5, 0.5);
+                    // Vector2 p2 = triangle->p2 + Vector2(0.5, 0.5);
 
                     Vector2 e01 = p1 - p0;
                     Vector2 e12 = p2 - p1;
@@ -233,9 +232,9 @@ Image3 hw_1_4(const std::vector<std::string> &params) {
                     Vector2 n12(e12.y, -e12.x);
                     Vector2 n20(e20.y, -e20.x);
 
-                    Vector2 v0 = p0 - transformedPixelCenter;
-                    Vector2 v1 = p1 - transformedPixelCenter;
-                    Vector2 v2 = p2 - transformedPixelCenter;
+                    Vector2 v0 = p0 - objectSpaceCenter;
+                    Vector2 v1 = p1 - objectSpaceCenter;
+                    Vector2 v2 = p2 - objectSpaceCenter;
 
                     if ((dot(v0, n01) >= 0) && (dot(v1, n12) >= 0) && (dot(v2, n20) >= 0) || (dot(v0, n01) <= 0) && (dot(v1, n12) <= 0) && (dot(v2, n20) <= 0)) {
                         img(x, y) = triangle->color;
