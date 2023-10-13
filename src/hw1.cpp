@@ -342,6 +342,70 @@ Image3 hw_1_6(const std::vector<std::string> &params) {
     for (int y = 0; y < img.height; y++) {
         for (int x = 0; x < img.width; x++) {
             img(x, y) = Vector3{1, 1, 1};
+            Vector3 pixelColor;
+
+            for (const Shape &shape : scene.shapes) {
+                Matrix3x3 transform = get_transform(shape);
+                Matrix3x3 inverseTransform = inverse(transform);
+
+                Vector3 pixelCenter3D = Vector3(
+                    (x + 0.5) / img.width - 0.5,
+                    (y + 0.5) / img.height - 0.5,
+                    Real(1)
+                );
+                Vector3 objectSpaceCenter = inverseTransform * pixelCenter3D;
+                Vector2 objectSpaceCenter2D(objectSpaceCenter.x, objectSpaceCenter.y);
+
+                if (auto *circle = std::get_if<Circle>(&shape)) {
+                    Vector2 radii(circle->radius, circle->radius);
+                    Vector2 scaledObjectSpaceCenter = Vector2(
+                        objectSpaceCenter2D.x / radii.x,
+                        objectSpaceCenter2D.y / radii.y
+                    );
+                    Real alpha = circle->alpha;
+
+                    if (dot(scaledObjectSpaceCenter, scaledObjectSpaceCenter) <= 1) {
+                        // Apply alpha blending
+                        pixelColor = alpha * circle->color + (1 - alpha) * pixelColor;
+                    }
+                } else if (auto *rectangle = std::get_if<Rectangle>(&shape)) {
+                    Real alpha = rectangle->alpha;
+
+                    if (objectSpaceCenter2D.x >= rectangle->p_min.x &&
+                        objectSpaceCenter2D.x <= rectangle->p_max.x &&
+                        objectSpaceCenter2D.y >= rectangle->p_min.y &&
+                        objectSpaceCenter2D.y <= rectangle->p_max.y) {
+                        // Apply alpha blending
+                        pixelColor = alpha * rectangle->color + (1 - alpha) * pixelColor;
+                    }
+                } else if (auto *triangle = std::get_if<Triangle>(&shape)) {
+                    Vector2 p0 = Vector2(triangle->p0.x + 0.5, triangle->p0.y + 0.5);
+                    Vector2 p1 = Vector2(triangle->p1.x + 0.5, triangle->p1.y + 0.5);
+                    Vector2 p2 = Vector2(triangle->p2.x + 0.5, triangle->p2.y + 0.5);
+
+                    Vector2 e01 = p1 - p0;
+                    Vector2 e12 = p2 - p1;
+                    Vector2 e20 = p0 - p2;
+
+                    Vector2 n01(e01.y, -e01.x);
+                    Vector2 n12(e12.y, -e12.x);
+                    Vector2 n20(e20.y, -e20.x);
+
+                    Vector2 v0 = p0 - objectSpaceCenter2D;
+                    Vector2 v1 = p1 - objectSpaceCenter2D;
+                    Vector2 v2 = p2 - objectSpaceCenter2D;
+
+                    Real alpha = triangle->alpha;
+
+                    if ((dot(v0, n01) >= 0) && (dot(v1, n12) >= 0) && (dot(v2, n20) >= 0) ||
+                        (dot(v0, n01) <= 0) && (dot(v1, n12) <= 0) && (dot(v2, n20) <= 0)) {
+                        // Apply alpha blending
+                        pixelColor = alpha * triangle->color + (1 - alpha) * pixelColor;
+                    }
+                }
+            }
+
+            img(x, y) = pixelColor; // Set the final pixel color
         }
     }
     return img;
