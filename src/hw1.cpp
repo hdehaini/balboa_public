@@ -177,15 +177,10 @@ Image3 hw_1_4(const std::vector<std::string> &params) {
                 Matrix3x3 transform = get_transform(shape);
                 Matrix3x3 inverseTransform = inverse(transform);
 
-                // Apply the transformation to the pixel's center
-                Vector3 objectSpaceCenter;
-                objectSpaceCenter.x = inverseTransform(0, 0) * pixelCenter.x + inverseTransform(0, 1) * pixelCenter.y + inverseTransform(0, 2);
-                objectSpaceCenter.y = inverseTransform(1, 0) * pixelCenter.x + inverseTransform(1, 1) * pixelCenter.y + inverseTransform(1, 2);
-                objectSpaceCenter.z = inverseTransform(2, 0) * pixelCenter.x + inverseTransform(2, 1) * pixelCenter.y + inverseTransform(2, 2);
+                Vector3 pixelCenter3D = Vector3(pixelCenter.x, pixelCenter.y, Real(1));
 
-                // Now, convert it back to 2D by dividing by the third component
-                objectSpaceCenter.x /= objectSpaceCenter.z;
-                objectSpaceCenter.y /= objectSpaceCenter.z;
+                // Apply the transformation to the pixel's center
+                Vector3 objectSpaceCenter = inverseTransform * pixelCenter3D;
 
                 Vector2 objectSpaceCenter2D = Vector2(objectSpaceCenter.x, objectSpaceCenter.y);
 
