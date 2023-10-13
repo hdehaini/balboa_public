@@ -187,6 +187,8 @@ Image3 hw_1_4(const std::vector<std::string> &params) {
                 objectSpaceCenter.x /= objectSpaceCenter.z;
                 objectSpaceCenter.y /= objectSpaceCenter.z;
 
+                Vector2 objectSpaceCenter2D = Vector2(objectSpaceCenter.x, objectSpaceCenter.y);
+
 
 
 
@@ -194,8 +196,8 @@ Image3 hw_1_4(const std::vector<std::string> &params) {
 
                     Vector2 radii(circle->radius, circle->radius); // Assume the circle is transformed into an ellipse
                     Vector2 scaledObjectSpaceCenter = Vector2(
-                        objectSpaceCenter.x / radii.x,
-                        objectSpaceCenter.y / radii.y
+                        objectSpaceCenter2D.x / radii.x,
+                        objectSpaceCenter2D.y / radii.y
                     );
                     if (dot(scaledObjectSpaceCenter, scaledObjectSpaceCenter) <= 1) {
                         img(x, y) = circle->color;
@@ -204,10 +206,10 @@ Image3 hw_1_4(const std::vector<std::string> &params) {
                 } else if (auto *rectangle = std::get_if<Rectangle>(&shape)) {
 
                    // Check if the transformed pixel center is inside the transformed rectangle
-                    if (objectSpaceCenter.x >= rectangle->p_min.x &&
-                        objectSpaceCenter.x <= rectangle->p_max.x &&
-                        objectSpaceCenter.y >= rectangle->p_min.y &&
-                        objectSpaceCenter.y <= rectangle->p_max.y) {
+                    if (objectSpaceCenter2D.x >= rectangle->p_min.x &&
+                        objectSpaceCenter2D.x <= rectangle->p_max.x &&
+                        objectSpaceCenter2D.y >= rectangle->p_min.y &&
+                        objectSpaceCenter2D.y <= rectangle->p_max.y) {
                         img(x, y) = rectangle->color;
 
                     }
@@ -224,8 +226,6 @@ Image3 hw_1_4(const std::vector<std::string> &params) {
                     Vector2 n01(e01.y, -e01.x);
                     Vector2 n12(e12.y, -e12.x);
                     Vector2 n20(e20.y, -e20.x);
-
-                    Vector2 objectSpaceCenter2D = Vector2(objectSpaceCenter.x, objectSpaceCenter.y);
 
                     Vector2 v0 = p0 - objectSpaceCenter2D;
                     Vector2 v1 = p1 - objectSpaceCenter2D;
