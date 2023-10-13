@@ -178,18 +178,24 @@ Image3 hw_1_4(const std::vector<std::string> &params) {
                 Matrix3x3 inverseTransform = inverse(transform);
 
                 // Apply the transformation to the pixel's center
-                Matrix3x3 objectSpaceCenter;
-                objectSpaceCenter(0, 0) = inverseTransform(0, 0) * pixelCenter.x + inverseTransform(0, 1) * pixelCenter.y + inverseTransform(0, 2);
-                objectSpaceCenter(1, 0) = inverseTransform(1, 0) * pixelCenter.x + inverseTransform(1, 1) * pixelCenter.y + inverseTransform(1, 2);
-                objectSpaceCenter(2, 0) = 1; // The third component is 1 for points, 0 for vectors
+                Vector3 objectSpaceCenter;
+                objectSpaceCenter.x = inverseTransform(0, 0) * pixelCenter.x + inverseTransform(0, 1) * pixelCenter.y + inverseTransform(0, 2);
+                objectSpaceCenter.y = inverseTransform(1, 0) * pixelCenter.x + inverseTransform(1, 1) * pixelCenter.y + inverseTransform(1, 2);
+                objectSpaceCenter.z = inverseTransform(2, 0) * pixelCenter.x + inverseTransform(2, 1) * pixelCenter.y + inverseTransform(2, 2);
+
+                // Now, convert it back to 2D by dividing by the third component
+                objectSpaceCenter.x /= objectSpaceCenter.z;
+                objectSpaceCenter.y /= objectSpaceCenter.z;
+
+
 
 
                 if (auto *circle = std::get_if<Circle>(&shape)) {
 
                     Vector2 radii(circle->radius, circle->radius); // Assume the circle is transformed into an ellipse
                     Vector2 scaledObjectSpaceCenter = Vector2(
-                        objectSpaceCenter(0, 0) / radii.x,
-                        objectSpaceCenter(1, 0) / radii.y
+                        objectSpaceCenter.x / radii.x,
+                        objectSpaceCenter.y / radii.y
                     );
                     if (dot(scaledObjectSpaceCenter, scaledObjectSpaceCenter) <= 1) {
                         img(x, y) = circle->color;
@@ -197,19 +203,19 @@ Image3 hw_1_4(const std::vector<std::string> &params) {
 
                 } else if (auto *rectangle = std::get_if<Rectangle>(&shape)) {
 
-                    // Check if the transformed pixel center is inside the transformed rectangle
-                    if (objectSpaceCenter(0, 0) >= rectangle->p_min.x &&
-                        objectSpaceCenter(0, 0) <= rectangle->p_max.x &&
-                        objectSpaceCenter(1, 0) >= rectangle->p_min.y &&
-                        objectSpaceCenter(1, 0) <= rectangle->p_max.y) {
+                   // Check if the transformed pixel center is inside the transformed rectangle
+                    if (objectSpaceCenter.x >= rectangle->p_min.x &&
+                        objectSpaceCenter.x <= rectangle->p_max.x &&
+                        objectSpaceCenter.y >= rectangle->p_min.y &&
+                        objectSpaceCenter.y <= rectangle->p_max.y) {
                         img(x, y) = rectangle->color;
 
                     }
                 } else if (auto *triangle = std::get_if<Triangle>(&shape)) {
 
-                    Vector2 p0 = triangle->p0 + Vector2(0.5, 0.5);
-                    Vector2 p1 = triangle->p1 + Vector2(0.5, 0.5);
-                    Vector2 p2 = triangle->p2 + Vector2(0.5, 0.5);
+                    Vector2 p0 = Vector2(triangle->p0.x + 0.5, triangle->p0.y + 0.5);
+                    Vector2 p1 = Vector2(triangle->p1.x + 0.5, triangle->p1.y + 0.5);
+                    Vector2 p2 = Vector2(triangle->p2.x + 0.5, triangle->p2.y + 0.5);
 
                     Vector2 e01 = p1 - p0;
                     Vector2 e12 = p2 - p1;
@@ -219,17 +225,11 @@ Image3 hw_1_4(const std::vector<std::string> &params) {
                     Vector2 n12(e12.y, -e12.x);
                     Vector2 n20(e20.y, -e20.x);
 
-                    Vector2 v0;
-                    v0.x = p0.x - objectSpaceCenter(0,0);
-                    v0.y = p0.y - objectSpaceCenter(1,0);
+                    Vector2 objectSpaceCenter2D = Vector2(objectSpaceCenter.x, objectSpaceCenter.y);
 
-                    Vector2 v1 = p1;
-                    v1.x = p1.x - objectSpaceCenter(0,0);
-                    v1.y = p1.y - objectSpaceCenter(1,0);
-
-                    Vector2 v2 = p2;
-                    v2.x = p2.x - objectSpaceCenter(0,0);
-                    v2.y = p2.y - objectSpaceCenter(1,0);
+                    Vector2 v0 = p0 - objectSpaceCenter2D;
+                    Vector2 v1 = p1 - objectSpaceCenter2D;
+                    Vector2 v2 = p2 - objectSpaceCenter2D;
                     
                     if ((dot(v0, n01) >= 0) && (dot(v1, n12) >= 0) && (dot(v2, n20) >= 0) || (dot(v0, n01) <= 0) && (dot(v1, n12) <= 0) && (dot(v2, n20) <= 0)) {
                         img(x, y) = triangle->color;
