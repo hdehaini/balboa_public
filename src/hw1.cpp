@@ -197,7 +197,7 @@ Image3 hw_1_4(const std::vector<std::string> &params) {
                     //     img(x, y) = circle->color;
                     // }
 
-                    Real distance = length(objectSpaceCenter2D - circle->center);
+                    Real distance = length(objectSpaceCenter2D - circle->radius);
 
                     if (distance <= circle->radius) {
                         // Set the pixel's color to the circle's color
