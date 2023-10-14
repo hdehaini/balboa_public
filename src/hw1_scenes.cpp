@@ -93,19 +93,32 @@ Matrix3x3 parse_transformation(const json &node) {
             Matrix3x3 scale_matrix = Matrix3x3::identity();
             scale_matrix(0,0) = scale_it->at(0);
             scale_matrix(1,1) = scale_it->at(1);
-            F = F * scale_matrix;
+            scale_matrix(2,2) = 1;
+            scale_matrix(0,1) = 0;
+            scale_matrix(1,0) = 0;
+            scale_matrix(0,2) = 0;
+            scale_matrix(1,2) = 0;
+            scale_matrix(2,0) = 0;
+            scale_matrix(2,1) = 0;
+            F = scale_matrix * F;
 
 
         } else if (auto rotate_it = it->find("rotate"); rotate_it != it->end()) {
-            Real angle = *rotate_it;
+            Real degrees = *rotate_it;
+            Real radians = degrees * (3.14159 / 180.0);
             // TODO (HW1.4): construct a rotation matrix and composite with F
 
             Matrix3x3 rotate_matrix = Matrix3x3::identity();
-            rotate_matrix(0,0) = cos(angle);
-            rotate_matrix(0,1) = -sin(angle);
-            rotate_matrix(1,0) = sin(angle);
-            rotate_matrix(1,1) = cos(angle);
-            F = F * rotate_matrix;
+            rotate_matrix(0,0) = cos(radians);
+            rotate_matrix(0,1) = -sin(radians);
+            rotate_matrix(1,0) = sin(radians);
+            rotate_matrix(1,1) = cos(radians);
+            rotate_matrix(2,2) = 1;
+            rotate_matrix(0,2) = 0;
+            rotate_matrix(1,2) = 0;
+            rotate_matrix(2,0) = 0;
+            rotate_matrix(2,1) = 0;
+            F = rotate_matrix * F;
                         
         } else if (auto translate_it = it->find("translate"); translate_it != it->end()) {
             Vector2 translate = Vector2{
@@ -114,25 +127,48 @@ Matrix3x3 parse_transformation(const json &node) {
             // TODO (HW1.4): construct a translation matrix and composite with F
 
             Matrix3x3 translate_matrix = Matrix3x3::identity();
+            translate_matrix(0,0) = 1;
+            translate_matrix(1,1) = 1;
+            translate_matrix(2,2) = 1;
+            translate_matrix(0,1) = 0;
+            translate_matrix(1,0) = 0;
+            translate_matrix(2,0) = 0;
+            translate_matrix(2,1) = 0;
             translate_matrix(0,2) = translate_it->at(0);
             translate_matrix(1,2) = translate_it->at(1);
-            F = F * translate_matrix;
+            F = translate_matrix * F;
             
         } else if (auto shearx_it = it->find("shear_x"); shearx_it != it->end()) {
             Real shear_x = *shearx_it;
             // TODO (HW1.4): construct a shear matrix (x direction) and composite with F
 
             Matrix3x3 shearx_matrix = Matrix3x3::identity();
-            shearx_matrix(0,1) = shearx_it->at(0);
-            F = F * shearx_matrix;
+            shearx_matrix(0,1) = shear_x;
+            shearx_matrix(2,2) = 1;
+            shearx_matrix(1,1) = 1;
+            shearx_matrix(0,0) = 1;
+            shearx_matrix(1,0) = 0;
+            shearx_matrix(2,0) = 0;
+            shearx_matrix(0,2) = 0;
+            shearx_matrix(1,2) = 0;
+            shearx_matrix(2,1) = 0;
+            F = shearx_matrix * F;
             
         } else if (auto sheary_it = it->find("shear_y"); sheary_it != it->end()) {
             Real shear_y = *sheary_it;
             // TODO (HW1.4): construct a shear matrix (y direction) and composite with F
 
             Matrix3x3 sheary_matrix = Matrix3x3::identity();
-            sheary_matrix(1,0) = sheary_it->at(0);
-            F = F * sheary_matrix;
+            sheary_matrix(1,0) = shear_y;
+            sheary_matrix(2,2) = 1;
+            sheary_matrix(1,1) = 1;
+            sheary_matrix(0,0) = 1;
+            sheary_matrix(0,1) = 0;
+            sheary_matrix(2,1) = 0;
+            sheary_matrix(0,2) = 0;
+            sheary_matrix(1,2) = 0;
+            sheary_matrix(2,0) = 0;
+            F = sheary_matrix * F;
             
         }
     }

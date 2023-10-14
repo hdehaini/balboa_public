@@ -182,28 +182,17 @@ Image3 hw_1_4(const std::vector<std::string> &params) {
                 Vector3 objectSpaceCenter = inverseTransform * pixelCenter3D;
 
                 Vector2 objectSpaceCenter2D = Vector2(objectSpaceCenter.x, objectSpaceCenter.y);
-
-
-
+                
 
                 if (auto *circle = std::get_if<Circle>(&shape)) {
 
-                    // Vector2 radii(circle->radius, circle->radius); // Assume the circle is transformed into an ellipse
-                    // Vector2 scaledObjectSpaceCenter = Vector2(
-                    //     objectSpaceCenter2D.x / radii.x,
-                    //     objectSpaceCenter2D.y / radii.y
-                    // );
-                    // if (dot(scaledObjectSpaceCenter, scaledObjectSpaceCenter) <= 1) {
-                    //     img(x, y) = circle->color;
-                    // }
-
-                    Real distance = length(objectSpaceCenter2D - circle->radius);
+                    Real distance = length(objectSpaceCenter2D - circle->center);
 
                     if (distance <= circle->radius) {
                         // Set the pixel's color to the circle's color
                         img(x, y) = circle->color;
                     }
-
+                    
                 } else if (auto *rectangle = std::get_if<Rectangle>(&shape)) {
 
                    // Check if the transformed pixel center is inside the transformed rectangle
@@ -212,13 +201,12 @@ Image3 hw_1_4(const std::vector<std::string> &params) {
                         objectSpaceCenter2D.y >= rectangle->p_min.y &&
                         objectSpaceCenter2D.y <= rectangle->p_max.y) {
                         img(x, y) = rectangle->color;
-
                     }
                 } else if (auto *triangle = std::get_if<Triangle>(&shape)) {
 
-                    Vector2 p0 = Vector2(triangle->p0.x + 0.5, triangle->p0.y + 0.5);
-                    Vector2 p1 = Vector2(triangle->p1.x + 0.5, triangle->p1.y + 0.5);
-                    Vector2 p2 = Vector2(triangle->p2.x + 0.5, triangle->p2.y + 0.5);
+                    Vector2 p0 = triangle->p0 + Vector2(0.5, 0.5);
+                    Vector2 p1 = triangle->p1 + Vector2(0.5, 0.5);
+                    Vector2 p2 = triangle->p2 + Vector2(0.5, 0.5);
 
                     Vector2 e01 = p1 - p0;
                     Vector2 e12 = p2 - p1;
@@ -282,12 +270,9 @@ Image3 hw_1_5(const std::vector<std::string> &params) {
 
                         if (auto *circle = std::get_if<Circle>(&shape)) {
 
-                            Vector2 radii(circle->radius, circle->radius); // Assume the circle is transformed into an ellipse
-                            Vector2 scaledObjectSpaceCenter = Vector2(
-                                objectSpaceCenter2D.x / radii.x,
-                                objectSpaceCenter2D.y / radii.y
-                            );
-                            if (dot(scaledObjectSpaceCenter, scaledObjectSpaceCenter) <= 1) {
+                            Real distance = length(objectSpaceCenter2D - circle->center);
+
+                            if (distance <= circle->radius) {
                                 subpixelColor = circle->color;
                             }
 
@@ -303,9 +288,9 @@ Image3 hw_1_5(const std::vector<std::string> &params) {
                             }
                         } else if (auto *triangle = std::get_if<Triangle>(&shape)) {
 
-                            Vector2 p0 = Vector2(triangle->p0.x + 0.5, triangle->p0.y + 0.5);
-                            Vector2 p1 = Vector2(triangle->p1.x + 0.5, triangle->p1.y + 0.5);
-                            Vector2 p2 = Vector2(triangle->p2.x + 0.5, triangle->p2.y + 0.5);
+                            Vector2 p0 = triangle->p0 + Vector2(0.5, 0.5);
+                            Vector2 p1 = triangle->p1 + Vector2(0.5, 0.5);
+                            Vector2 p2 = triangle->p2 + Vector2(0.5, 0.5);
 
                             Vector2 e01 = p1 - p0;
                             Vector2 e12 = p2 - p1;
