@@ -172,7 +172,6 @@ Image3 hw_1_4(const std::vector<std::string> &params) {
             img(x, y) = scene.background;
 
             for (const Shape &shape : scene.shapes) {
-                // const Shape &shape = scene.shapes[i];
 
                 Matrix3x3 transform = get_transform(shape);
                 Matrix3x3 inverseTransform = inverse(transform);
@@ -190,11 +189,18 @@ Image3 hw_1_4(const std::vector<std::string> &params) {
                 if (auto *circle = std::get_if<Circle>(&shape)) {
 
                     Vector2 radii(circle->radius, circle->radius); // Assume the circle is transformed into an ellipse
-                    Vector2 scaledObjectSpaceCenter = Vector2(
-                        objectSpaceCenter2D.x / radii.x,
-                        objectSpaceCenter2D.y / radii.y
-                    );
-                    if (dot(scaledObjectSpaceCenter, scaledObjectSpaceCenter) <= 1) {
+                    // Vector2 scaledObjectSpaceCenter = Vector2(
+                    //     objectSpaceCenter2D.x / radii.x,
+                    //     objectSpaceCenter2D.y / radii.y
+                    // );
+                    // if (dot(scaledObjectSpaceCenter, scaledObjectSpaceCenter) <= 1) {
+                    //     img(x, y) = circle->color;
+                    // }
+
+                    Real distance = length(objectSpaceCenter2D - circle->center);
+
+                    if (distance <= circle->radius) {
+                        // Set the pixel's color to the circle's color
                         img(x, y) = circle->color;
                     }
 
