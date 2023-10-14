@@ -188,7 +188,7 @@ Image3 hw_1_4(const std::vector<std::string> &params) {
 
                 if (auto *circle = std::get_if<Circle>(&shape)) {
 
-                    Vector2 radii(circle->radius, circle->radius); // Assume the circle is transformed into an ellipse
+                    // Vector2 radii(circle->radius, circle->radius); // Assume the circle is transformed into an ellipse
                     // Vector2 scaledObjectSpaceCenter = Vector2(
                     //     objectSpaceCenter2D.x / radii.x,
                     //     objectSpaceCenter2D.y / radii.y
