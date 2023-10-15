@@ -241,22 +241,21 @@ Image3 hw_1_5(const std::vector<std::string> &params) {
 
     Image3 img(scene.resolution.x, scene.resolution.y);
 
-    for (int y = 0; y < img.height; y++) {
-        for (int x = 0; x < img.width; x++) {
-            img(x, y) = Vector3{0.5 , 0.5, 0.5};
-            Vector3 subpixelColor;
-            Vector3 pixelColor;
+    for (int x = 0; x < img.width; x++) {
+        for (int y = 0; y < img.height; y++) {
+            Vector3 subpixelColor = scene.background;
+            Vector3 pixelColor = scene.background;
+            img(x, y) = scene.background;
 
             for(int j = 0; j < 4; j++){
                 for(int k = 0; k < 4; k++){
-                    Real subpixelX = (x + (k + 0.5) / 4.0) / img.width - 0.5;
-                    Real subpixelY = (y + (j + 0.5) / 4.0) / img.height - 0.5;
+                    Real subpixelX = (x + (j + 0.5) / 4.0);
+                    Real subpixelY = (y + (k + 0.5) / 4.0);
 
                     Vector2 pixelCenter(subpixelX, subpixelY);
-                    img(x, y) = scene.background;
+                    
 
                     for (const Shape &shape : scene.shapes) {
-                        // const Shape &shape = scene.shapes[i];
 
                         Matrix3x3 transform = get_transform(shape);
                         Matrix3x3 inverseTransform = inverse(transform);
@@ -284,7 +283,6 @@ Image3 hw_1_5(const std::vector<std::string> &params) {
                                 objectSpaceCenter2D.y >= rectangle->p_min.y &&
                                 objectSpaceCenter2D.y <= rectangle->p_max.y) {
                                 subpixelColor = rectangle->color;
-
                             }
                         } else if (auto *triangle = std::get_if<Triangle>(&shape)) {
 
@@ -312,7 +310,7 @@ Image3 hw_1_5(const std::vector<std::string> &params) {
                     pixelColor += subpixelColor;
                 }
             }
-            pixelColor /= 16.0;
+            pixelColor /= Real(16);
             img(x, y) = pixelColor;
         }
     }
