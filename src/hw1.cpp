@@ -57,29 +57,16 @@ Image3 hw_1_2(const std::vector<std::string> &params) {
     for (int y = 0; y < img.height; y++) {
         for (int x = 0; x < img.width; x++) {
             img(x, y) = scene.background;
-
-            Vector2 pixelCenter(x + Real(0.5), y + Real(0.5));
-            Real numObjects = scene.objects.size();
-            for (int i = 0; i < numObjects; i++) {
-                Real distance = length(pixelCenter - scene.objects[i].center);
-
-                if (distance <= scene.objects[i].radius) {
-                    // Set the pixel's color to the circle's color
-                    img(x, y) = scene.objects[i].color;
-                }
-            }
         }
     }
 
-    // Real numObjects = scene.objects.size();
-    // for (int i = 0; i < numObjects; i++) {
-    //     Vector2 bounding_box_min = scene.objects[i].center - Vector2(scene.objects[i].radius, scene.objects[i].radius);
-    //     Vector2 bounding_box_max = scene.objects[i].center + Vector2(scene.objects[i].radius, scene.objects[i].radius);
-    //     for (int y = bounding_box_min.y; y < bounding_box_max.y; y++) {
-    //         for (int x = bounding_box_min.x; x < bounding_box_max.x; x++) {
-    //             img(x, y) = Vector3{0.5, 0.5, 0.5};
+    // for (int y = 0; y < img.height; y++) {
+    //     for (int x = 0; x < img.width; x++) {
+    //         img(x, y) = scene.background;
 
-    //             Vector2 pixelCenter(x + Real(0.5), y + Real(0.5));
+    //         Vector2 pixelCenter(x + Real(0.5), y + Real(0.5));
+    //         Real numObjects = scene.objects.size();
+    //         for (int i = 0; i < numObjects; i++) {
     //             Real distance = length(pixelCenter - scene.objects[i].center);
 
     //             if (distance <= scene.objects[i].radius) {
@@ -89,6 +76,33 @@ Image3 hw_1_2(const std::vector<std::string> &params) {
     //         }
     //     }
     // }
+    
+
+    // ================================================================
+    // BONUS: Use bounding boxes to speed up rendering
+    // ================================================================
+
+    Real numObjects = scene.objects.size();
+    for (int i = 0; i < numObjects; i++) {
+        const Circle &circle = scene.objects[i];
+
+        Vector2 bounding_box_min = circle.center - Vector2(circle.radius, circle.radius);
+        Vector2 bounding_box_max = circle.center + Vector2(circle.radius, circle.radius);
+
+        for (int y = bounding_box_min.y; y < bounding_box_max.y; y++) {
+            for (int x = bounding_box_min.x; x < bounding_box_max.x; x++) {
+                // img(x, y) = scene.background;
+
+                Vector2 pixelCenter(x + Real(0.5), y + Real(0.5));
+                Real distance = length(pixelCenter - circle.center);
+
+                if (distance <= circle.radius) {
+                    // Set the pixel's color to the circle's color
+                    img(x, y) = circle.color;
+                }
+            }
+        }
+    }
     
     return img;
 }

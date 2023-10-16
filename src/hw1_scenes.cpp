@@ -105,7 +105,7 @@ Matrix3x3 parse_transformation(const json &node) {
 
         } else if (auto rotate_it = it->find("rotate"); rotate_it != it->end()) {
             Real degrees = *rotate_it;
-            Real radians = degrees * (3.14159 / 180.0);
+            Real radians = degrees * (c_PI / 180.0);
             // TODO (HW1.4): construct a rotation matrix and composite with F
 
             Matrix3x3 rotate_matrix = Matrix3x3::identity();
