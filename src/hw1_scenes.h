@@ -38,7 +38,40 @@ struct Triangle {
     Matrix3x3 transform;
 };
 
-using Shape = std::variant<Circle, Rectangle, Triangle>;
+// Define a structure for representing a 2D line segment
+struct Line {
+    Vector2 start;    // Starting point of the line
+    Vector2 end;      // Ending point of the line
+    Real width;       // Line width
+    Vector3 color;    // Line color
+    Real alpha;       // Line transparency
+    Matrix3x3 transform; // Transformation matrix
+};
+
+// Define a structure for representing a quadratic Bézier curve
+struct Quadratic {
+    Vector2 start;   // Starting point of the curve
+    Vector2 control; // Control point
+    Vector2 end;     // Ending point of the curve
+    Real width;      // Curve width
+    Vector3 color;   // Curve color
+    Real alpha;      // Curve transparency
+    Matrix3x3 transform; // Transformation matrix
+};
+
+// Define a structure for representing a cubic Bézier curve
+struct Cubic {
+    Vector2 start;      // Starting point of the curve
+    Vector2 control1;   // First control point
+    Vector2 control2;   // Second control point
+    Vector2 end;        // Ending point of the curve
+    Real width;         // Curve width
+    Vector3 color;      // Curve color
+    Real alpha;         // Curve transparency
+    Matrix3x3 transform; // Transformation matrix
+};
+
+using Shape = std::variant<Circle, Rectangle, Triangle, Line, Quadratic, Cubic>;
 
 inline void set_color(Shape &shape, const Vector3 &color) {
     std::visit([&](auto &s) { s.color = color; }, shape);

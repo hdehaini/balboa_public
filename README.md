@@ -1,67 +1,24 @@
-# balboa
-UCSD CSE 167 codebase
-https://cseweb.ucsd.edu/~tzli/cse167/
+# CSE 167 Homework
+## HW1: 2D Graphics
 
-# Build
-All the dependencies are included. Use CMake to build.
-```
-git clone --recurse-submodules https://github.com/BachiLi/balboa_public mkdir build
-cd build
-cmake ..
-make -j
-```
-It requires compilers that support C++17 (gcc version >= 8, clang version >= 7, Apple Clang version >= 11.0, MSVC version >= 19.14).
+### Scenes
 
----
-### For Windows users:
-1. Install [Visual Studio 2022](https://visualstudio.microsoft.com/downloads/) and [Visual Studio Code](https://code.visualstudio.com/). Choose "Desktop development with C++" and check "C++ CMake tools for Windows" on the recipe. 
-2. `git clone --recurse-submodules https://github.com/BachiLi/balboa_public`
-3. `cd balboa_public; mkdir build; cd build`
-4. `cmake ..`
-5. At this point, you can either open up the `balboa.sln` in `build` folder and use Visual Studio as your IDE, or work with Visual Studio Code. 
+ - For 1.7, the scene I created is called starry_sea.json in [./balboa_public/scenes/hw1/starry_sea.json](balboa_public/scenes/hw1/starry_sea.json)
+ - For 1.8, I made a scene that would use lines, quadratic, and cubic besier lines called besier_lines.json in [balboa_public/scenes/hw1/besier_lines.json](balboa_public/scenes/hw1/besier_lines.json)
 
-(optional) To build, run, and debug in VS Code: 
+### Renderings
 
-1. In the bottom bar, configure CMake as follows (from left to right): 
-    - Build variant: `RelWithDebInfo`. 
-    - Active kit: `Visual Studio ... x64`, choose the appropriate one depending on your architecture. 
-    - Default build target: `balboa`. 
-2. Create a `launch.json` in `.vscode` folder: 
-    ```
-    {
-        "version": "0.2.0",
-        "configurations": [
-            {
-                "name": "hw1_1", 
-                "type": "cppvsdbg", 
-                "request": "launch", 
-                "program": "${workspaceFolder}/build/${command:cmake.buildType}/balboa.exe",
-                "cwd": "${workspaceFolder}/build/${command:cmake.buildType}", 
-                "args": ["-hw", "1_1"]
-            }
-        ]
-    }
-    ```
-    You can pass arguments using `args`. 
-3. Press `Ctrl+Shift+D` to start the debugger. You can set breakpoints, inspect variables, and trace callstack, etc. 
+ - My rendering for starry_sea.json is called hw_1_7_starry_sea.png in [balboa_public/outputs/hw_1_7_starry_sea.png](balboa_public/outputs/hw_1_7_starry_sea.png)
+ - All my png renderings for all hw1 parts ar in balboa_public/outputs
 
-# Run
-Try 
-```
-cd build
-./balboa -hw 1_1
-```
-This will generate an image "hw1_1.png".
+### Bonuses
 
-# Acknowledgement
-stb\_image, stb\_image\_write, json, tinyply, GLFW, and glad
+I have done all the bonuses
 
-We use [stb_image](https://github.com/nothings/stb) and [stb_image_write](https://github.com/nothings/stb) for reading & writing images.
-
-We use [json](https://github.com/nlohmann/json) to parse JSON files.
-
-We use [tinyply](https://github.com/ddiakopoulos/tinyply) for parsing PLY files.
-
-We use [glfw](https://www.glfw.org/) and [glad](https://glad.dav1d.de/) for the OpenGL homeworks.
-
-3D models and textures: [Stanford 3D Scanning Repository](https://graphics.stanford.edu/data/3Dscanrep/), [KickAir_8p](https://blenderartists.org/t/uv-unwrapped-stanford-bunny-happy-spring-equinox/1101297), and [Texturemontage](http://kunzhou.net/tex-models.htm).
+ - For the 1.2 bonus, I put both the original 1.2 code and the bonus code in the same 1.2 function, since it wouldn't affect the outcome.
+ - For the 1.4 bonus, the animation is called hw_1_4_bonus_colorblind_test.mp4 in the outputs directory [balboa_public/outputs/hw_1_4_bonus_colorblind_test.mp4](balboa_public/outputs/hw_1_4_bonus_colorblind_test.mp4).
+ - For the 1.8 bonus, 
+   - I made a new function hw_1_8 in hw1.cpp while implementing what I think is the implementation for making lines, quadratic, and cubic besier curves.
+   - I also defined the function in main.cpp and hw1.h.
+   - I made a new scene to test the function consisting of all three line types in [balboa_public/scenes/hw1/besier_lines.json](balboa_public/scenes/hw1/besier_lines.json).
+   - Lastly, I made a new struct in [balboa_public/src/hw1_scenes.h](balboa_public/src/hw1_scenes.h) for a line, a quadratic, and a cubic besier curve to be used in my function.
