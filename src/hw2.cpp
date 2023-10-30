@@ -191,9 +191,10 @@ Image3 hw_2_2(const std::vector<std::string> &params) {
                             if (depth < z_min) {
                                 subpixelColor = mesh.face_colors[face.x];
                                 z_min = depth;
-                                std::cout << depth << std::endl;
+                                std::cout << subpixelColor << std::endl;
                             } else {
                                 subpixelColor = Vector3{0.5, 0.5, 0.5};
+                                // std::cout << depth << std::endl;
                             }
                         }
                     }
