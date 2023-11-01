@@ -48,9 +48,9 @@ Image3 hw_2_1(const std::vector<std::string> &params) {
 
     Real a = Real(img.width)/Real(img.height);
 
-    Vector2 t0 = Vector2((img_width) * ((h0.x + (s * a)) / (2 * s * a)), (img_height) * ((Real(-1) * h0.y + (s)) / (2 * s)));
-    Vector2 t1 = Vector2((img_width) * ((h1.x + (s * a)) / (2 * s * a)), (img_height) * ((Real(-1) * h1.y + (s)) / (2 * s)));
-    Vector2 t2 = Vector2((img_width) * ((h2.x + (s * a)) / (2 * s * a)), (img_height) * ((Real(-1) * h2.y + (s)) / (2 * s)));
+    Vector2 t0 = Vector2((img.width) * ((h0.x + (s * a)) / (2 * s * a)), (img.height) * ((Real(-1) * h0.y + (s)) / (2 * s)));
+    Vector2 t1 = Vector2((img.width) * ((h1.x + (s * a)) / (2 * s * a)), (img.height) * ((Real(-1) * h1.y + (s)) / (2 * s)));
+    Vector2 t2 = Vector2((img.width) * ((h2.x + (s * a)) / (2 * s * a)), (img.height) * ((Real(-1) * h2.y + (s)) / (2 * s)));
 
     for (int y = 0; y < img.height; y++) {
         for (int x = 0; x < img.width; x++) {
@@ -74,7 +74,7 @@ Image3 hw_2_1(const std::vector<std::string> &params) {
                         Vector2 v0 = t0 - subpixelCenter;
                         Vector2 v1 = t1 - subpixelCenter;
                         Vector2 v2 = t2 - subpixelCenter;
-                        
+
                         if ((dot(v0, n01) >= 0) && (dot(v1, n12) >= 0) && (dot(v2, n20) >= 0) || (dot(v0, n01) <= 0) && (dot(v1, n12) <= 0) && (dot(v2, n20) <= 0)) {
                             subpixelColor = color;
                         } else {
@@ -89,6 +89,23 @@ Image3 hw_2_1(const std::vector<std::string> &params) {
         }
     }
     return img;
+}
+
+Real calculateTriangleArea(const Vector3& vertex1, const Vector3& vertex2, const Vector3& vertex3) {
+    // Calculate two vectors from the given points
+    Real vector1x = vertex2.x - vertex1.x;
+    Real vector1y = vertex2.y - vertex1.y;
+
+    Real vector2x = vertex3.x - vertex1.x;
+    Real vector2y = vertex3.y - vertex1.y;
+
+    // Calculate the cross product of the two vectors
+    Real crossProduct = vector1x * vector2y - vector1y * vector2x;
+
+    // Calculate the area (0.5 * |cross product|)
+    Real area = 0.5 * std::abs(crossProduct);
+
+    return area;
 }
 
 Image3 hw_2_2(const std::vector<std::string> &params) {
@@ -114,51 +131,13 @@ Image3 hw_2_2(const std::vector<std::string> &params) {
 
     TriangleMesh mesh = meshes[scene_id];
 
-    for(int l = 0; l < 15; l++){
-        Vector3 p0 = mesh.vertices[mesh.vertices[l].x];
-        Vector3 p1 = mesh.vertices[mesh.vertices[l].y];
-        Vector3 p2 = mesh.vertices[mesh.vertices[l].z];
-
-        if(p0.z < -z_near && p1.z < -z_near && p2.z < -z_near) {
-
-            // std::cout << (p0.z < -z_near && p1.z < -z_near && p2.z < -z_near) << std::endl;
-            Vector2 subpixelCenter(300, 300);
-
-            Vector2 h0 = Vector2(p0.x / -p0.z, p0.y / -p0.z);
-            Vector2 h1 = Vector2(p1.x / -p1.z, p1.y / -p1.z);
-            Vector2 h2 = Vector2(p2.x / -p2.z, p2.y / -p2.z);
-
-            Vector2 t0 = Vector2((img.width) * ((h0.x + (s * a)) / (2 * s * a)), (img.height) * ((Real(-1) * h0.y + (s)) / (2 * s)));
-            Vector2 t1 = Vector2((img.width) * ((h1.x + (s * a)) / (2 * s * a)), (img.height) * ((Real(-1) * h1.y + (s)) / (2 * s)));
-            Vector2 t2 = Vector2((img.width) * ((h2.x + (s * a)) / (2 * s * a)), (img.height) * ((Real(-1) * h2.y + (s)) / (2 * s)));
-
-            Vector2 e01 = t1 - t0;
-            Vector2 e12 = t2 - t1;
-            Vector2 e20 = t0 - t2;
-
-            Vector2 n01(e01.y, -e01.x);
-            Vector2 n12(e12.y, -e12.x);
-            Vector2 n20(e20.y, -e20.x);
-
-            Vector2 v0 = t0 - subpixelCenter;
-            Vector2 v1 = t1 - subpixelCenter;
-            Vector2 v2 = t2 - subpixelCenter;
-
-            std::cout << ((dot(v0, n01) >= 0) && (dot(v1, n12) >= 0) && (dot(v2, n20) >= 0) || (dot(v0, n01) <= 0) && (dot(v1, n12) <= 0) && (dot(v2, n20) <= 0)) << std::endl;
-            
-            std::cout << "hello" << std::endl;
-        }
-    }
-    
-    
     for (int y = 0; y < img.height; y++) {
         for (int x = 0; x < img.width; x++) {
             Vector3 pixelColor = background;
             Vector3 subpixelColor = background;
             for (int j = 0; j < 4; j++) {
                 for (int k = 0; k < 4; k++) {
-                    Real z_min = -100000;
-                    Real z_near = 1e-6;
+                    Real z_min = -1e6;
                     Real subpixelX = (x + (j + 0.5) / 4.0);
                     Real subpixelY = (y + (k + 0.5) / 4.0);
                     Vector2 subpixelCenter(subpixelX, subpixelY);
@@ -166,26 +145,23 @@ Image3 hw_2_2(const std::vector<std::string> &params) {
                     for (int l = 0; l < mesh.faces.size(); l++) {
                         
 
-                        Vector2 camera_curr;
-                        camera_curr.x = ((2 * s * a * subpixelCenter.x) / Real(img.width)) - (a * s);
-                        camera_curr.y = ((Real(-1) * 2 * s * subpixelCenter.y) / Real(img.height)) + (s);
+                        // Vector2 camera_curr;
+                        // camera_curr.x = ((2 * s * a * subpixelCenter.x) / Real(img.width)) - (a * s);
+                        // camera_curr.y = ((Real(-1) * 2 * s * subpixelCenter.y) / Real(img.height)) + (s);
 
                         Vector3 p0 = mesh.vertices[mesh.faces[l].x];
                         Vector3 p1 = mesh.vertices[mesh.faces[l].y];
                         Vector3 p2 = mesh.vertices[mesh.faces[l].z];
 
+                        Vector2 h0 = Vector2(p0.x / -p0.z, p0.y / -p0.z);
+                        Vector2 h1 = Vector2(p1.x / -p1.z, p1.y / -p1.z);
+                        Vector2 h2 = Vector2(p2.x / -p2.z, p2.y / -p2.z);
+
+                        Vector2 t0 = Vector2((img.width) * ((h0.x + (s * a)) / (2 * s * a)), (img.height) * ((Real(-1) * h0.y + (s)) / (2 * s)));
+                        Vector2 t1 = Vector2((img.width) * ((h1.x + (s * a)) / (2 * s * a)), (img.height) * ((Real(-1) * h1.y + (s)) / (2 * s)));
+                        Vector2 t2 = Vector2((img.width) * ((h2.x + (s * a)) / (2 * s * a)), (img.height) * ((Real(-1) * h2.y + (s)) / (2 * s)));
+
                         if(p0.z < -z_near && p1.z < -z_near && p2.z < -z_near) {
-
-                            // std::cout << (p0.z < -z_near && p1.z < -z_near && p2.z < -z_near) << std::endl;
-
-                            Vector2 h0 = Vector2(p0.x / -p0.z, p0.y / -p0.z);
-                            Vector2 h1 = Vector2(p1.x / -p1.z, p1.y / -p1.z);
-                            Vector2 h2 = Vector2(p2.x / -p2.z, p2.y / -p2.z);
-
-                            Vector2 t0 = Vector2((img.width) * ((h0.x + (s * a)) / (2 * s * a)), (img.height) * ((Real(-1) * h0.y + (s)) / (2 * s)));
-                            Vector2 t1 = Vector2((img.width) * ((h1.x + (s * a)) / (2 * s * a)), (img.height) * ((Real(-1) * h1.y + (s)) / (2 * s)));
-                            Vector2 t2 = Vector2((img.width) * ((h2.x + (s * a)) / (2 * s * a)), (img.height) * ((Real(-1) * h2.y + (s)) / (2 * s)));
-
                             Vector2 e01 = t1 - t0;
                             Vector2 e12 = t2 - t1;
                             Vector2 e20 = t0 - t2;
@@ -197,47 +173,47 @@ Image3 hw_2_2(const std::vector<std::string> &params) {
                             Vector2 v0 = t0 - subpixelCenter;
                             Vector2 v1 = t1 - subpixelCenter;
                             Vector2 v2 = t2 - subpixelCenter;
-
-                            // std::cout << ((dot(v0, n01) >= 0) && (dot(v1, n12) >= 0) && (dot(v2, n20) >= 0) || (dot(v0, n01) <= 0) && (dot(v1, n12) <= 0) && (dot(v2, n20) <= 0)) << std::endl;
                             
                             if ((dot(v0, n01) >= 0) && (dot(v1, n12) >= 0) && (dot(v2, n20) >= 0) || (dot(v0, n01) <= 0) && (dot(v1, n12) <= 0) && (dot(v2, n20) <= 0)) {
+                                    
+                                Vector3 p_prime = Vector3(subpixelCenter.x, subpixelCenter.y, Real(1));
+                                Vector3 p0_prime = Vector3(t0.x, t0.y, Real(1));
+                                Vector3 p1_prime = Vector3(t1.x, t1.y, Real(1));
+                                Vector3 p2_prime = Vector3(t2.x, t2.y, Real(1));
+
+                                // // Finding edge vectors
+                                // Vector3 e1 = p1_prime - p0_prime;
+                                // Vector3 e2 = p2_prime - p0_prime;
+
+                                // Real denominator = length(cross(e1, e2)) / Real(2);
+
+
+                                // Vector3 e3 = p1_prime - p_prime;
+                                // Vector3 e4 = p2_prime - p_prime;
+
+                                // Real b0_num = length(cross(e3, e4)) / Real(2);
+
+
+                                // Vector3 e5 = p_prime - p0_prime;
+                                // Vector3 e6 = p2_prime - p0_prime;
+
+                                // Real b1_num = length(cross(e5, e6)) / Real(2);
+
+
+                                // Vector3 e7 = p1_prime - p0_prime;
+                                // Vector3 e8 = p_prime - p0_prime;
                                 
-                                
-                                
-                                Vector3 p_prime = Vector3(subpixelCenter.x, subpixelCenter.y, Real(-1));
-                                Vector3 p0_prime = Vector3(t0.x, t0.y, Real(-1));
-                                Vector3 p1_prime = Vector3(t1.x, t1.y, Real(-1));
-                                Vector3 p2_prime = Vector3(t2.x, t2.y, Real(-1));
-
-                                // Finding edge vectors
-                                Vector3 e1 = p1_prime - p0_prime;
-                                Vector3 e2 = p2_prime - p0_prime;
-
-                                Real denominator = length(cross(e1, e2)) / Real(2);
+                                // Real b2_num = length(cross(e7, e8)) / Real(2);
 
 
-                                Vector3 e3 = p1_prime - p_prime;
-                                Vector3 e4 = p2_prime - p_prime;
+                                // // getting barycentric prime coordinates
+                                // Real b0_prime = b0_num / denominator;
+                                // Real b1_prime = b1_num / denominator;
+                                // Real b2_prime = b2_num / denominator;
 
-                                Real b0_num = length(cross(e3, e4)) / Real(2);
-
-
-                                Vector3 e5 = p_prime - p0_prime;
-                                Vector3 e6 = p2_prime - p0_prime;
-
-                                Real b1_num = length(cross(e5, e6)) / Real(2);
-
-
-                                Vector3 e7 = p1_prime - p0_prime;
-                                Vector3 e8 = p_prime - p0_prime;
-                                
-                                Real b2_num = length(cross(e7, e8)) / Real(2);
-
-
-                                // getting barycentric prime coordinates
-                                Real b0_prime = b0_num / denominator;
-                                Real b1_prime = b1_num / denominator;
-                                Real b2_prime = b2_num / denominator;
+                                Real b0_prime = calculateTriangleArea(p_prime, p1_prime, p2_prime) / calculateTriangleArea(p0_prime, p1_prime, p2_prime);
+                                Real b1_prime = calculateTriangleArea(p0_prime, p_prime, p2_prime) / calculateTriangleArea(p0_prime, p1_prime, p2_prime);
+                                Real b2_prime = calculateTriangleArea(p0_prime, p1_prime, p_prime) / calculateTriangleArea(p0_prime, p1_prime, p2_prime);
 
 
                                 // getting barycentric coordinates
@@ -251,15 +227,16 @@ Image3 hw_2_2(const std::vector<std::string> &params) {
 
 
                                 // getting depth
-                                Real depth = (b0 * p0.z) + (b1 * p1.z) + (b2 * p2.z);
+                                Real depth = (b0 * p0.z + b1 * p1.z + b2 * p2.z);
                                 
-                                if (depth > z_min) {
+                                if (-depth > z_min) {
                                 // if (depth < z_min) {
                                     subpixelColor = mesh.face_colors[l];
                                     z_min = depth;
                                     // std::cout << subpixelColor << std::endl;
                                 } else {
                                     subpixelColor = Vector3{0.5, 0.5, 0.5};
+                                    
                                     // std::cout << depth << std::endl;
                                 }
                             }
@@ -302,112 +279,81 @@ Image3 hw_2_3(const std::vector<std::string> &params) {
     TriangleMesh mesh = meshes[scene_id];
     // UNUSED(mesh); // silence warning, feel free to remove this
 
-    for (int y = 0; y < img.height; y++) {
+        for (int y = 0; y < img.height; y++) {
         for (int x = 0; x < img.width; x++) {
             Vector3 pixelColor = background;
             Vector3 subpixelColor = background;
             for (int j = 0; j < 4; j++) {
                 for (int k = 0; k < 4; k++) {
-                    Real z_min = 1e6;
-                    Real z_near = 1e-6;
+                    Real z_min = -1e6;
                     Real subpixelX = (x + (j + 0.5) / 4.0);
                     Real subpixelY = (y + (k + 0.5) / 4.0);
                     Vector2 subpixelCenter(subpixelX, subpixelY);
-                    int faceNum = 0;
 
-                    for (auto face : mesh.faces) {
-                        
-                        faceNum++;
+                    for (int l = 0; l < mesh.faces.size(); l++) {
 
-                        Vector2 camera_curr;
-                        camera_curr.x = ((2 * s * a * subpixelCenter.x) / img_width) - (a * s);
-                        camera_curr.y = ((-2 * s * a * subpixelCenter.y) / img_height) + (a * s);
-
-                        Vector3 p0 = mesh.vertices[face.x];
-                        Vector3 p1 = mesh.vertices[face.y];
-                        Vector3 p2 = mesh.vertices[face.z];
+                        Vector3 p0 = mesh.vertices[mesh.faces[l].x];
+                        Vector3 p1 = mesh.vertices[mesh.faces[l].y];
+                        Vector3 p2 = mesh.vertices[mesh.faces[l].z];
 
                         Vector2 h0 = Vector2(p0.x / -p0.z, p0.y / -p0.z);
                         Vector2 h1 = Vector2(p1.x / -p1.z, p1.y / -p1.z);
                         Vector2 h2 = Vector2(p2.x / -p2.z, p2.y / -p2.z);
 
-                        Vector2 e01 = h1 - h0;
-                        Vector2 e12 = h2 - h1;
-                        Vector2 e20 = h0 - h2;
+                        Vector2 t0 = Vector2((img.width) * ((h0.x + (s * a)) / (2 * s * a)), (img.height) * ((Real(-1) * h0.y + (s)) / (2 * s)));
+                        Vector2 t1 = Vector2((img.width) * ((h1.x + (s * a)) / (2 * s * a)), (img.height) * ((Real(-1) * h1.y + (s)) / (2 * s)));
+                        Vector2 t2 = Vector2((img.width) * ((h2.x + (s * a)) / (2 * s * a)), (img.height) * ((Real(-1) * h2.y + (s)) / (2 * s)));
 
-                        Vector2 n01(e01.y, -e01.x);
-                        Vector2 n12(e12.y, -e12.x);
-                        Vector2 n20(e20.y, -e20.x);
+                        if(p0.z < -z_near && p1.z < -z_near && p2.z < -z_near) {
+                            Vector2 e01 = t1 - t0;
+                            Vector2 e12 = t2 - t1;
+                            Vector2 e20 = t0 - t2;
 
-                        Vector2 v0 = h0 - camera_curr;
-                        Vector2 v1 = h1 - camera_curr;
-                        Vector2 v2 = h2 - camera_curr;
-                        
-                        if ((dot(v0, n01) >= 0) && (dot(v1, n12) >= 0) && (dot(v2, n20) >= 0) || (dot(v0, n01) <= 0) && (dot(v1, n12) <= 0) && (dot(v2, n20) <= 0)) {
+                            Vector2 n01(e01.y, -e01.x);
+                            Vector2 n12(e12.y, -e12.x);
+                            Vector2 n20(e20.y, -e20.x);
+
+                            Vector2 v0 = t0 - subpixelCenter;
+                            Vector2 v1 = t1 - subpixelCenter;
+                            Vector2 v2 = t2 - subpixelCenter;
                             
-                            Vector3 p_prime = Vector3(camera_curr.x, camera_curr.y, Real(-1));
-                            Vector3 p0_prime = Vector3(h0.x, h0.y, Real(-1));
-                            Vector3 p1_prime = Vector3(h1.x, h1.y, Real(-1));
-                            Vector3 p2_prime = Vector3(h2.x, h2.y, Real(-1));
+                            if ((dot(v0, n01) >= 0) && (dot(v1, n12) >= 0) && (dot(v2, n20) >= 0) || (dot(v0, n01) <= 0) && (dot(v1, n12) <= 0) && (dot(v2, n20) <= 0)) {
+                                    
+                                Vector3 p_prime = Vector3(subpixelCenter.x, subpixelCenter.y, Real(1));
+                                Vector3 p0_prime = Vector3(t0.x, t0.y, Real(1));
+                                Vector3 p1_prime = Vector3(t1.x, t1.y, Real(1));
+                                Vector3 p2_prime = Vector3(t2.x, t2.y, Real(1));
 
-                            // Finding edge vectors
-                            Vector3 e1 = p1_prime - p0_prime;
-                            Vector3 e2 = p2_prime - p0_prime;
-
-                            Real denominator = length(cross(e1, e2)) / 2;
-
-
-                            Vector3 e3 = p1_prime - p_prime;
-                            Vector3 e4 = p2_prime - p_prime;
-
-                            Real b0_num = length(cross(e3, e4)) / 2;
+                                Real b0_prime = calculateTriangleArea(p_prime, p1_prime, p2_prime) / calculateTriangleArea(p0_prime, p1_prime, p2_prime);
+                                Real b1_prime = calculateTriangleArea(p0_prime, p_prime, p2_prime) / calculateTriangleArea(p0_prime, p1_prime, p2_prime);
+                                Real b2_prime = calculateTriangleArea(p0_prime, p1_prime, p_prime) / calculateTriangleArea(p0_prime, p1_prime, p2_prime);
 
 
-                            Vector3 e5 = p_prime - p0_prime;
-                            Vector3 e6 = p2_prime - p0_prime;
+                                // getting barycentric coordinates
+                                Real b_den = (b0_prime / p0.z) + (b1_prime / p1.z) + (b2_prime / p2.z);
 
-                            Real b1_num = length(cross(e5, e6)) / 2;
+                                Real b0 = (b0_prime / p0.z) / b_den;
+                                Real b1 = (b1_prime / p1.z) / b_den;
+                                Real b2 = (b2_prime / p2.z) / b_den;
 
+                                // std::cout << b0 << " " << b1 << " " << b2 << std::endl;
 
-                            Vector3 e7 = p1_prime - p0_prime;
-                            Vector3 e8 = p_prime - p0_prime;
-                            
-                            Real b2_num = length(cross(e7, e8)) / 2;
+                                Vector3 C0 = mesh.vertex_colors[mesh.faces[l].x];
+                                Vector3 C1 = mesh.vertex_colors[mesh.faces[l].y];
+                                Vector3 C2 = mesh.vertex_colors[mesh.faces[l].z];
 
-
-                            // getting barycentric prime coordinates
-                            Real b0_prime = b0_num / denominator;
-                            Real b1_prime = b1_num / denominator;
-                            Real b2_prime = b2_num / denominator;
+                                Vector3 interpolatedColor = b0 * C0 + b1 * C1 + b2 * C2;
 
 
-                            // getting barycentric coordinates
-                            Real b_den = (b0_prime / p0.z) + (b1_prime / p1.z) + (b2_prime / p2.z);
-
-                            Real b0 = (b0_prime / p0.z) / b_den;
-                            Real b1 = (b1_prime / p1.z) / b_den;
-                            Real b2 = (b2_prime / p2.z) / b_den;
-
-                            // std::cout << b0 << " " << b1 << " " << b2 << std::endl;
-
-                            Vector3 C0 = mesh.vertex_colors[face.x];
-                            Vector3 C1 = mesh.vertex_colors[face.y];
-                            Vector3 C2 = mesh.vertex_colors[face.z];
-
-                            Vector3 interpolatedColor = b0 * C0 + b1 * C1 + b2 * C2;
-
-
-                            // getting depth
-                            Real depth = (b0 * p0.z) + (b1 * p1.z) + (b2 * p2.z);
-
-                            if (abs(depth) < abs(z_min) && depth < z_near) {
-                                // subpixelColor = mesh.face_colors[faceNum - 1];
-                                subpixelColor = interpolatedColor;
-                                z_min = depth;
-                                // std::cout << subpixelColor << std::endl;
-                            } else {
-                                subpixelColor = Vector3{0.5, 0.5, 0.5};
-                                // std::cout << depth << std::endl;
+                                // getting depth
+                                Real depth = (b0 * p0.z + b1 * p1.z + b2 * p2.z);
+                                
+                                if (depth > z_min) {
+                                    subpixelColor = interpolatedColor;
+                                    z_min = depth;
+                                } else {
+                                    subpixelColor = Vector3{0.5, 0.5, 0.5};
+                                    }
                             }
                         }
                     }
