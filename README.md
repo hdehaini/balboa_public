@@ -1,4 +1,20 @@
 # CSE 167 Homework
+
+## HW2: 3D Graphics
+
+### Renderings
+
+I have an extremely small bug that stopped my entire proccess for this project, were in 2.2 some of the faces that should be showing arn't. I was able to finish every thing I can:
+
+- 2.1: Completed normaly.
+- 2.2: Scene 1 is good, scenes 2 and 3 are a bit off.
+- 2.3: The coloring logic is completly correct, but since I couldn't find the bug, the rendering issue persisted.
+- 2.4: The parse_transformation function is completed, but again, 2.2 rendering issue persisted, don't have completed renderings.
+- 2.5: Couldn't test my own scene with 2.2 rendering bug.
+
+---
+
+
 ## HW1: 2D Graphics
 
 ### Scenes

@@ -254,8 +254,9 @@ Matrix4x4 parse_transformation(const json &node) {
             });
             // TODO (HW2.4): construct a rotation matrix and composite with F
             Matrix4x4 rotate_matrix = Matrix4x4::identity();
-            Real c = cos(angle);
-            Real s = sin(angle);
+            Real a = angle * c_PI / 180;
+            Real c = cos(a);
+            Real s = sin(a);
             Real t = 1 - c;
             rotate_matrix(0,0) = t * axis.x * axis.x + c;
             rotate_matrix(0,1) = t * axis.x * axis.y - s * axis.z;
