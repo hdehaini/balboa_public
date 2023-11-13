@@ -170,7 +170,8 @@ TriangleMesh parse_ply(const fs::path &filename) {
 }
 
 Matrix4x4 parse_transformation(const json &node) {
-    // Homework 3.3: take the code from Homework 2.4 and copy paste it here
+    // Homework 2.4: parse a sequence of linear transformation and 
+    // combine them into a 4x4 transformation matrix
     Matrix4x4 F = Matrix4x4::identity();
     auto transform_it = node.find("transform");
     if (transform_it == node.end()) {
@@ -183,22 +184,39 @@ Matrix4x4 parse_transformation(const json &node) {
             Vector3 scale = Vector3{
                 (*scale_it)[0], (*scale_it)[1], (*scale_it)[2]
             };
-            // TODO (HW3.3): construct a scale matrix and composite with F
-            UNUSED(scale); // silence warning, feel free to remove it
+            Matrix4x4 m(
+                scale.x, Real(0), Real(0), Real(0),
+                Real(0), scale.y, Real(0), Real(0),
+                Real(0), Real(0), scale.z, Real(0),
+                Real(0), Real(0), Real(0), Real(1)
+            );
+            F = m * F;
         } else if (auto rotate_it = it->find("rotate"); rotate_it != it->end()) {
             Real angle = (*rotate_it)[0];
             Vector3 axis = normalize(Vector3{
                 (*rotate_it)[1], (*rotate_it)[2], (*rotate_it)[3]
             });
-            // TODO (HW3.3): construct a rotation matrix and composite with F
-            UNUSED(angle); // silence warning, feel free to remove it
-            UNUSED(axis); // silence warning, feel free to remove it
+            Real c = cos(angle * (c_PI / 180));
+            Real s = sin(angle * (c_PI / 180));
+            Real x = axis.x, y = axis.y, z = axis.z;
+            Matrix4x4 m(
+                x*x+(1-x*x)*c, y*x*(1-c)-z*s, z*x*(1-c)+y*s, Real(0),
+                x*y*(1-c)+z*s, y*y+(1-y*y)*c, z*y*(1-c)-x*s, Real(0),
+                x*z*(1-c)-y*s, y*z*(1-c)+x*s, z*z+(1-z*z)*c, Real(0),
+                Real(0), Real(0), Real(0), Real(1)
+            );
+            F = m * F;
         } else if (auto translate_it = it->find("translate"); translate_it != it->end()) {
             Vector3 translate = Vector3{
                 (*translate_it)[0], (*translate_it)[1], (*translate_it)[2]
             };
-            // TODO (HW3.3): construct a translation matrix and composite with F
-            UNUSED(translate); // silence warning, feel free to remove it
+            Matrix4x4 m(
+                Real(1), Real(0), Real(0), translate.x,
+                Real(0), Real(1), Real(0), translate.y,
+                Real(0), Real(0), Real(1), translate.z,
+                Real(0), Real(0), Real(0), Real(1)
+            );
+            F = m * F;
         } else if (auto lookat_it = it->find("lookat"); lookat_it != it->end()) {
             Vector3 position{0, 0, 0};
             Vector3 target{0, 0, -1};
@@ -221,7 +239,17 @@ Matrix4x4 parse_transformation(const json &node) {
                     (*up_it)[0], (*up_it)[1], (*up_it)[2]
                 });
             }
-            // TODO (HW3.3): construct a lookat matrix and composite with F
+            Vector3 d = normalize(target - position);
+            Vector3 r = normalize(cross(d, up));
+            Vector3 u = cross(r, d);
+
+            Matrix4x4 m(
+                r.x, u.x, -d.x, position.x,
+                r.y, u.y, -d.y, position.y,
+                r.z, u.z, -d.z, position.z,
+                Real(0), Real(0), Real(0), Real(1)
+            );
+            F = m * F;
         }
     }
     return F;
