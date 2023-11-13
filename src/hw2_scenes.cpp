@@ -241,43 +241,39 @@ Matrix4x4 parse_transformation(const json &node) {
             Vector3 scale = Vector3{
                 (*scale_it)[0], (*scale_it)[1], (*scale_it)[2]
             };
-            // TODO (HW2.4): construct a scale matrix and composite with F
-            Matrix4x4 scale_matrix = Matrix4x4::identity();
-            scale_matrix(0,0) = scale_it->at(0);
-            scale_matrix(1,1) = scale_it->at(1);
-            scale_matrix(2,2) = scale_it->at(2);
-            F = scale_matrix * F;
+            Matrix4x4 m(
+                scale.x, Real(0), Real(0), Real(0),
+                Real(0), scale.y, Real(0), Real(0),
+                Real(0), Real(0), scale.z, Real(0),
+                Real(0), Real(0), Real(0), Real(1)
+            );
+            F = m * F;
         } else if (auto rotate_it = it->find("rotate"); rotate_it != it->end()) {
             Real angle = (*rotate_it)[0];
             Vector3 axis = normalize(Vector3{
                 (*rotate_it)[1], (*rotate_it)[2], (*rotate_it)[3]
             });
-            // TODO (HW2.4): construct a rotation matrix and composite with F
-            Matrix4x4 rotate_matrix = Matrix4x4::identity();
-            Real a = angle * c_PI / 180;
-            Real c = cos(a);
-            Real s = sin(a);
-            Real t = 1 - c;
-            rotate_matrix(0,0) = t * axis.x * axis.x + c;
-            rotate_matrix(0,1) = t * axis.x * axis.y - s * axis.z;
-            rotate_matrix(0,2) = t * axis.x * axis.z + s * axis.y;
-            rotate_matrix(1,0) = t * axis.x * axis.y + s * axis.z;
-            rotate_matrix(1,1) = t * axis.y * axis.y + c;
-            rotate_matrix(1,2) = t * axis.y * axis.z - s * axis.x;
-            rotate_matrix(2,0) = t * axis.x * axis.z - s * axis.y;
-            rotate_matrix(2,1) = t * axis.y * axis.z + s * axis.x;
-            rotate_matrix(2,2) = t * axis.z * axis.z + c;
-            F = rotate_matrix * F;
+            Real c = cos(angle * (c_PI / 180));
+            Real s = sin(angle * (c_PI / 180));
+            Real x = axis.x, y = axis.y, z = axis.z;
+            Matrix4x4 m(
+                x*x+(1-x*x)*c, y*x*(1-c)-z*s, z*x*(1-c)+y*s, Real(0),
+                x*y*(1-c)+z*s, y*y+(1-y*y)*c, z*y*(1-c)-x*s, Real(0),
+                x*z*(1-c)-y*s, y*z*(1-c)+x*s, z*z+(1-z*z)*c, Real(0),
+                Real(0), Real(0), Real(0), Real(1)
+            );
+            F = m * F;
         } else if (auto translate_it = it->find("translate"); translate_it != it->end()) {
             Vector3 translate = Vector3{
                 (*translate_it)[0], (*translate_it)[1], (*translate_it)[2]
             };
-            // TODO (HW2.4): construct a translation matrix and composite with F
-            Matrix4x4 translate_matrix = Matrix4x4::identity();
-            translate_matrix(0,3) = translate.x;
-            translate_matrix(1,3) = translate.y;
-            translate_matrix(2,3) = translate.z;
-            F = translate_matrix * F;
+            Matrix4x4 m(
+                Real(1), Real(0), Real(0), translate.x,
+                Real(0), Real(1), Real(0), translate.y,
+                Real(0), Real(0), Real(1), translate.z,
+                Real(0), Real(0), Real(0), Real(1)
+            );
+            F = m * F;
         } else if (auto lookat_it = it->find("lookat"); lookat_it != it->end()) {
             Vector3 position{0, 0, 0};
             Vector3 target{0, 0, -1};
@@ -300,24 +296,17 @@ Matrix4x4 parse_transformation(const json &node) {
                     (*up_it)[0], (*up_it)[1], (*up_it)[2]
                 });
             }
-            // TODO (HW2.4): construct a lookat matrix and composite with F
-            Vector3 w = normalize(position - target);
-            Vector3 u = normalize(cross(up, w));
-            Vector3 v = cross(w, u);
-            Matrix4x4 lookat_matrix = Matrix4x4::identity();
-            lookat_matrix(0,0) = u.x;
-            lookat_matrix(0,1) = u.y;
-            lookat_matrix(0,2) = u.z;
-            lookat_matrix(1,0) = v.x;
-            lookat_matrix(1,1) = v.y;
-            lookat_matrix(1,2) = v.z;
-            lookat_matrix(2,0) = w.x;
-            lookat_matrix(2,1) = w.y;
-            lookat_matrix(2,2) = w.z;
-            lookat_matrix(0,3) = -dot(u, position);
-            lookat_matrix(1,3) = -dot(v, position);
-            lookat_matrix(2,3) = -dot(w, position);
-            F = lookat_matrix * F;
+            Vector3 d = normalize(target - position);
+            Vector3 r = normalize(cross(d, up));
+            Vector3 u = cross(r, d);
+
+            Matrix4x4 m(
+                r.x, u.x, -d.x, position.x,
+                r.y, u.y, -d.y, position.y,
+                r.z, u.z, -d.z, position.z,
+                Real(0), Real(0), Real(0), Real(1)
+            );
+            F = m * F;
         }
     }
     return F;
