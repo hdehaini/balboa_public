@@ -169,10 +169,10 @@ TriangleMesh parse_ply(const fs::path &filename) {
     return mesh;
 }
 
-Matrix4x4 parse_transformation(const json &node) {
+Matrix4x4f parse_transformation(const json &node) {
     // Homework 2.4: parse a sequence of linear transformation and 
     // combine them into a 4x4 transformation matrix
-    Matrix4x4 F = Matrix4x4::identity();
+    Matrix4x4f F = Matrix4x4f::identity();
     auto transform_it = node.find("transform");
     if (transform_it == node.end()) {
         // Transformation not specified, return identity.
@@ -184,7 +184,7 @@ Matrix4x4 parse_transformation(const json &node) {
             Vector3 scale = Vector3{
                 (*scale_it)[0], (*scale_it)[1], (*scale_it)[2]
             };
-            Matrix4x4 m(
+            Matrix4x4f m(
                 scale.x, Real(0), Real(0), Real(0),
                 Real(0), scale.y, Real(0), Real(0),
                 Real(0), Real(0), scale.z, Real(0),
@@ -199,7 +199,7 @@ Matrix4x4 parse_transformation(const json &node) {
             Real c = cos(angle * (c_PI / 180));
             Real s = sin(angle * (c_PI / 180));
             Real x = axis.x, y = axis.y, z = axis.z;
-            Matrix4x4 m(
+            Matrix4x4f m(
                 x*x+(1-x*x)*c, y*x*(1-c)-z*s, z*x*(1-c)+y*s, Real(0),
                 x*y*(1-c)+z*s, y*y+(1-y*y)*c, z*y*(1-c)-x*s, Real(0),
                 x*z*(1-c)-y*s, y*z*(1-c)+x*s, z*z+(1-z*z)*c, Real(0),
@@ -210,7 +210,7 @@ Matrix4x4 parse_transformation(const json &node) {
             Vector3 translate = Vector3{
                 (*translate_it)[0], (*translate_it)[1], (*translate_it)[2]
             };
-            Matrix4x4 m(
+            Matrix4x4f m(
                 Real(1), Real(0), Real(0), translate.x,
                 Real(0), Real(1), Real(0), translate.y,
                 Real(0), Real(0), Real(1), translate.z,
@@ -243,7 +243,7 @@ Matrix4x4 parse_transformation(const json &node) {
             Vector3 r = normalize(cross(d, up));
             Vector3 u = cross(r, d);
 
-            Matrix4x4 m(
+            Matrix4x4f m(
                 r.x, u.x, -d.x, position.x,
                 r.y, u.y, -d.y, position.y,
                 r.z, u.z, -d.z, position.z,
