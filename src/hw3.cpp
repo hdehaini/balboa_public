@@ -228,7 +228,7 @@ void hw_3_3(const std::vector<std::string> &params) {
         "uniform mat4 projection;\n"
         "void main()\n"
         "{\n"
-        "   gl_Position = model * view * projection * vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+        "   gl_Position = projection * view * model * vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
         "   ourColor = aColor;\n"
         "}\0";
 
@@ -328,13 +328,13 @@ void hw_3_3(const std::vector<std::string> &params) {
         Real z_far = Real(scene.camera.z_far);
 
         Matrix4x4f projection = Matrix4x4f(
-            1.0 / a * s, 0.0, 0.0, 0.0,
+            1.0 / (a * s), 0.0, 0.0, 0.0,
             0.0, 1.0 / s, 0.0, 0.0,
             0.0, 0.0, -z_far / (z_far - z_near), (-z_far * z_near) / (z_far - z_near),
             0.0, 0.0, -1.0, 0.0
         );
 
-        std::cout << "projection: " << projection << std::endl;
+        // std::cout << "projection: " << projection << std::endl;
 
         // render
         // ------
@@ -441,7 +441,7 @@ void hw_3_3(const std::vector<std::string> &params) {
             // Draw the mesh using indexed rendering
             glDrawElements(GL_TRIANGLES, mesh.faces.size() * 3, GL_UNSIGNED_INT, 0);
 
-            i++;
+            // i++;
             glBindVertexArray(0);
         }
 
