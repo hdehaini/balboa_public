@@ -1,5 +1,17 @@
 # CSE 167 Homework
 
+## HW3: 3D OpenGL Rendering
+
+### Renderings
+
+The scene that I designed is in [balboa_public\scenes\hw3\scythe.json](balboa_public\scenes\hw3\scythe.json), with the image of the output in [balboa_public\outputs\scythe.png](balboa_public\outputs\scythe.png)
+
+I implemented the 3.3 bonus where I use mouse input, as shown in the recordings.
+
+
+
+---
+
 ## HW2: 3D Graphics
 
 ### Renderings
