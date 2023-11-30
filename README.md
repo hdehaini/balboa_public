@@ -1,5 +1,16 @@
 # CSE 167 Homework
 
+## HW4: 3D Modeling
+
+### Renderings
+
+The donut scene that I designed is in [.\scenes\hw3\donut.json](.\scenes\hw3\donut.json), with the image of the output in [.\outputs\hw4_donut.png](.\outputs\hw4_donut.png). I also included the blender rendered version in [.\outputs\hw4_donut_blender.png](.\outputs\hw4_donut_blender.png) because it looks a lot nicer.
+
+The scene (lamp post) that I designed is in [.\scenes\hw3\not_donut.json](.\scenes\hw3\not_donut.json), with the image of the output in [.\outputs\hw4_not_donut.png](.\outputs\hw4_not_donut.png). I also included the blender rendered version in [.\outputs\hw4_not_donut_blender.png](.\outputs\hw4_not_donut_blender.png) because it looks a lot nicer.
+
+
+
+---
 ## HW3: 3D OpenGL Rendering
 
 ### Renderings
